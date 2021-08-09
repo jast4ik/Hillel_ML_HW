@@ -42,7 +42,7 @@ def get_next_and_previous(input_string=None):
 
 
 if __name__ == "__main__":
-    user_input = input("Please enter the number (integer):\n")
+    user_input = input("Please, enter the number (integer):\n")
     all_numbers = get_next_and_previous(user_input)
     if all_numbers[0] != np.inf:
         print("Next for number "

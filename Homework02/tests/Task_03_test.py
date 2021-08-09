@@ -4,15 +4,15 @@ import numpy as np
 
 
 class GetSumTest(ut.TestCase):
-    """Tests for get_next_and_previous()"""
+    """Tests for get_next_and_previous(). Task 03."""
 
     @classmethod
     def setUpClass(cls) -> None:
-        print("-----\tget_next_and_previous() tests start.\t\t-----")
+        print("-----\tTask 03 tests start.\t-----")
 
     @classmethod
     def tearDownClass(cls) -> None:
-        print("-----\tget_next_and_previous() tests complete.\t-----\n")
+        print("-----\tTask 03 tests complete.\t-----\n")
 
     def setUp(self) -> None:
         print("\t[" + self.shortDescription() + "]")

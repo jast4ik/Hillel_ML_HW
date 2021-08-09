@@ -3,15 +3,15 @@ from Homework02.Task_01 import get_hello_string
 
 
 class GetHelloStringTest(ut.TestCase):
-    """Tests for get_hello_string()"""
+    """Tests for get_hello_string(). Task 01."""
 
     @classmethod
     def setUpClass(cls) -> None:
-        print("-----\tget_hello_string() tests start.\t\t-----")
+        print("-----\tTask 01 tests start.\t-----")
 
     @classmethod
     def tearDownClass(cls) -> None:
-        print("-----\tget_hello_string() tests complete.\t-----")
+        print("-----\tTask 01 tests complete.\t-----")
 
     def setUp(self) -> None:
         print("\t[" + self.shortDescription() + "]")

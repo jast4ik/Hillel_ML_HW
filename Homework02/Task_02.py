@@ -45,5 +45,5 @@ def get_sum(input_string=None):
 
 
 if __name__ == "__main__":
-    user_input = input("Please input set of numbers, separated by space:\n")
+    user_input = input("Please, enter set of numbers, separated by space:\n")
     print("\nSum of entered numbers is: " + str(get_sum(user_input)))

@@ -3,15 +3,15 @@ from Homework02.Task_02 import get_sum
 
 
 class GetSumTest(ut.TestCase):
-    """Tests for get_sum()"""
+    """Tests for get_sum(). Task 02."""
 
     @classmethod
     def setUpClass(cls) -> None:
-        print("-----\tget_sum() tests start.\t\t-----")
+        print("-----\tTask 02 tests start.\t-----")
 
     @classmethod
     def tearDownClass(cls) -> None:
-        print("-----\tget_sum() tests complete.\t-----")
+        print("-----\tTask 02 tests complete.\t-----")
 
     def setUp(self) -> None:
         print("\t[" + self.shortDescription() + "]")
