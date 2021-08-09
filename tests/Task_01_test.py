@@ -1,5 +1,5 @@
 import unittest as ut
-from HW_02.HW_02_EX_01 import get_hello_string
+from Homework02.Task_01 import get_hello_string
 
 
 class GetHelloStringTest(ut.TestCase):
