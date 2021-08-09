@@ -1,17 +1,18 @@
 import unittest as ut
-from Homework02.Task_02 import get_sum
+from Homework02.Task_03 import get_next_and_previous
+import numpy as np
 
 
 class GetSumTest(ut.TestCase):
-    """Tests for get_sum()"""
+    """Tests for get_next_and_previous()"""
 
     @classmethod
     def setUpClass(cls) -> None:
-        print("-----\tget_sum() tests start.\t\t-----")
+        print("-----\tget_next_and_previous() tests start.\t\t-----")
 
     @classmethod
     def tearDownClass(cls) -> None:
-        print("-----\tget_sum() tests complete.\t-----")
+        print("-----\tget_next_and_previous() tests complete.\t-----\n")
 
     def setUp(self) -> None:
         print("\t[" + self.shortDescription() + "]")
@@ -25,13 +26,10 @@ class GetSumTest(ut.TestCase):
         print("\t\tid: " + self.id())
 
         print("\t\tAbsolutely correct input.")
-        self.assertEqual(get_sum("2 3 4 5.0 6.25"), 20.25)
+        self.assertEqual(get_next_and_previous("22"), (21, 22, 23))
 
         print("\t\tInput with leading and trailing spaces.")
-        self.assertEqual(get_sum("   2 3 4 5.0 6.25   "), 20.25)
-
-        print("\t\tInput with alphabetical characters.")
-        self.assertEqual(get_sum(" @*^#$   2  3 4 5.0 6.25 5, sddf"), 20.25)
+        self.assertEqual(get_next_and_previous("   22   "), (21, 22, 23))
 
     def test_incorrect_input(self):
         """Testing with the wrong input type."""
@@ -39,16 +37,16 @@ class GetSumTest(ut.TestCase):
         print("\t\tid: " + self.id())
 
         print("\t\tInput is integer.")
-        self.assertEqual(get_sum(123), -1)
+        self.assertEqual(get_next_and_previous(123), (np.inf, np.inf, np.inf))
 
         print("\t\tInput is float.")
-        self.assertEqual(get_sum(123.55), -1)
+        self.assertEqual(get_next_and_previous(123.55), (np.inf, np.inf, np.inf))
 
         print("\t\tInput is None.")
-        self.assertEqual(get_sum(None), -1)
+        self.assertEqual(get_next_and_previous(None), (np.inf, np.inf, np.inf))
 
         print("\t\tInput is list.")
-        self.assertEqual(get_sum([1, '1', 2]), -1)
+        self.assertEqual(get_next_and_previous([1, '1', 2]), (np.inf, np.inf, np.inf))
 
 
 if __name__ == "__main__":
