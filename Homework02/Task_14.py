@@ -12,7 +12,7 @@ __email__ = "yevgen.iliashchienko@gmail.com"
 __status__ = "Development"
 
 
-def detemine_vowel_consonant(input_string=None):
+def determine_vowel_consonant(input_string=None):
     """Defines letter is vowel or consonant.
 
     :param input_string:
@@ -46,7 +46,7 @@ def detemine_vowel_consonant(input_string=None):
 
 if __name__ == "__main__":
     user_input = input("Please, enter letter:\n")
-    result = detemine_vowel_consonant(user_input)
+    result = determine_vowel_consonant(user_input)
     if result != -1:
         if result:
             print("Letter " + user_input + " is vowel.")
