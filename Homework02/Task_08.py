@@ -1,9 +1,11 @@
 """The task #9.
-Two numbers are given. Withdraw smaller.
+Two numbers are given defining the interval.
+Withdraw two numbers from an interval, rational and whole.
 """
 
 
 import numpy as np
+import random
 
 
 __author__ = "Yevgen Iliashchienko"
@@ -16,13 +18,13 @@ __email__ = "yevgen.iliashchienko@gmail.com"
 __status__ = "Development"
 
 
-def get_smallest(input_string=None):
-    """Get two numbers from a string and returns smaller one.
+def get_random_numbers(input_string=None):
+    """Get two numbers from a string and returns two numbers from an interval, rational and whole.
 
     :param input_string:
         String to be processed.
     :return:
-        Smallest number.
+        Tuple: Rational, whole.
     """
 
     if type(input_string) is not str:
@@ -50,11 +52,14 @@ def get_smallest(input_string=None):
         print("Please, enter TWO numbers.")
         return np.inf
 
-    return min(numbers)
+    rational = random.uniform(numbers[0], numbers[1])
+    whole = random.randint(int(numbers[0]), int(numbers[1]))
+
+    return rational, whole
 
 
 if __name__ == "__main__":
     user_input = input("Please, enter two numbers, separated by space:\n")
-    smallest_number = get_smallest(user_input)
-    if smallest_number != np.inf:
-        print("\nSmallest numbers is: " + str(smallest_number))
+    result = get_random_numbers(user_input)
+    if result != np.inf:
+        print("\nRandom rational is {:.6f}, whole is {}.".format(result[0], result[1]))
