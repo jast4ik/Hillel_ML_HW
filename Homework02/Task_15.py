@@ -1,8 +1,6 @@
-"""The task #5.
-Three sides of the triangle are given. Find its perimeter and area.
+"""The task #15.
+Three sides of the triangle are given. Determine if a triangle is isosceles or equilateral.
 """
-
-import math
 
 __author__ = "Yevgen Iliashchienko"
 __copyright__ = "Copyright 2021, Yevgen Iliashchienko"
@@ -14,13 +12,13 @@ __email__ = "yevgen.iliashchienko@gmail.com"
 __status__ = "Development"
 
 
-def find_area_and_perimeter(input_string=None):
-    """Get three sides of the triangle and returns its perimeter and area.
+def is_isosceles_or_equilateral(input_string=None):
+    """Get three sides of the triangle and returns is it isosceles or equilateral.
 
     :param input_string:
         String to be processed.
     :return:
-        Tuple: Area, perimeter.
+        String: Is isosceles, is equilateral in natural language.
     """
 
     if type(input_string) is not str:
@@ -53,9 +51,6 @@ def find_area_and_perimeter(input_string=None):
             print("Length cannot be negative or zero.")
             return -1
 
-    perimeter = sum(sides)
-    p = perimeter / 2.0
-
     triangle_exist = False
     if (sides[0] + sides[1]) > sides[2]:
         triangle_exist = True
@@ -64,19 +59,28 @@ def find_area_and_perimeter(input_string=None):
         print("A triangle with such sides does not exist.")
         return -1
 
-    area = math.sqrt(p * (p - sides[0]) * (p - sides[1]) * (p - sides[2]))
+    is_equilateral = False
+    is_isosceles = False
 
-    factor = 10.0 ** 4
+    if (sides[0] == sides[1]) and (sides[0] == sides[2]) and (sides[1] == sides[2]):
+        is_equilateral = True
+    elif (sides[0] == sides[1]) or (sides[0] == sides[2]) or (sides[1] == sides[2]):
+        is_isosceles = True
 
-    return math.trunc(area * factor) / factor, math.trunc(perimeter * factor) / factor
+    result = "Triangle"
+
+    if not is_equilateral and not is_isosceles:
+        result += " neither isosceles nor equilateral."
+    elif is_equilateral:
+        result += " is equilateral."
+    elif is_isosceles:
+        result += " is isosceles."
+
+    return result
 
 
 if __name__ == "__main__":
     user_input = input("Please, enter three sides of the triangle, separated by space:\n")
-    triangle_metrics = find_area_and_perimeter(user_input)
+    triangle_metrics = is_isosceles_or_equilateral(user_input)
     if triangle_metrics != -1:
-        print(
-            "\nArea of the triangle is {} and perimeter is {}.".format(
-                triangle_metrics[0], triangle_metrics[1]
-            )
-        )
+        print(triangle_metrics)
