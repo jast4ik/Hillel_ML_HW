@@ -27,10 +27,12 @@ class GetSumTest(ut.TestCase):
         print("\t\tAbsolutely correct input.")
         self.assertEqual(is_isosceles_or_equilateral("2 2 3"), "Triangle is isosceles.")
         self.assertEqual(is_isosceles_or_equilateral("2 2 2"), "Triangle is equilateral.")
+        self.assertEqual(is_isosceles_or_equilateral("2 3 4"), "Triangle neither isosceles nor equilateral.")
 
         print("\t\tInput with leading and trailing spaces.")
         self.assertEqual(is_isosceles_or_equilateral("   2 2 3  "), "Triangle is isosceles.")
         self.assertEqual(is_isosceles_or_equilateral("   2 2 2  "), "Triangle is equilateral.")
+        self.assertEqual(is_isosceles_or_equilateral("   2 3 4  "), "Triangle neither isosceles nor equilateral.")
 
     def test_incorrect_input(self):
         """Testing with the wrong input type."""
