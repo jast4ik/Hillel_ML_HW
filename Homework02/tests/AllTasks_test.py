@@ -2,8 +2,8 @@ import unittest as ut
 import Homework02.AllTasks as HW2
 
 
-class GetHelloStringTest(ut.TestCase):
-    """Tests for get_hello_string(). Task 01."""
+class Homework02Test(ut.TestCase):
+    """Tests for Homework 02."""
 
     @classmethod
     def setUpClass(cls) -> None:
