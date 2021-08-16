@@ -29,15 +29,15 @@ import numpy as np
 
 # region Input and result strings definition
 prompt_strings = {
-    1:  "\nEnter a number to calculate the square root.",
-    2:  "\nEnter a sequence of numbers.",
-    3:  "\nEnter the symbol of the mathematical operation and the sequence of numbers to which it should be applied."
+    1: "\nEnter a number to calculate the square root.",
+    2: "\nEnter a sequence of numbers.",
+    3: "\nEnter the symbol of the mathematical operation and the sequence of numbers to which it should be applied."
 }
 
 result_strings = {
-    1:  "The square root of the entered number is {}.",
-    2:  "The maximum in the sequence is the number {}.",
-    3:  "The result of a mathematical operation on all elements of the sequence is {}."
+    1: "The square root of the entered number is {}.",
+    2: "The maximum in the sequence is the number {}.",
+    3: "The result of a mathematical operation on all elements of the sequence is {}."
 }
 
 
@@ -209,6 +209,8 @@ def apply_math_to_list(input_string=None):
         return round(math.prod(nums), 3)
     else:
         return None
+
+
 # endregion
 
 
@@ -251,20 +253,59 @@ def get_n_fibonacci_sequence(input_string=None, at_index=False):
 
     return f_sequence
 
+
 # endregion
 
+# region Task 05
+def get_fibonacci_sequence_to_n(input_string=None):
+    """
+    Function returns a Fibonacci sequence less than a given number.
+    :param input_string:
+        String to be processed.
+    :return:
+        Fibonacci sequence less than N.
+    """
+    if not is_string("get_fibonacci_sequence_to_n():", input_string):
+        return None
+
+    nums = extract_numbers("get_fibonacci_sequence_to_n()\t", input_string)
+    if nums is None:
+        return None
+
+    if int(nums[0]) <= 1:
+        return None
+
+    if len(nums) != 1:
+        print("get_fibonacci_sequence_to_n():\tPlease enter only ONE number.")
+        return None
+
+    f_sequence = []
+    f_number = 1
+    index = 1
+    while f_number < int(nums[0]):
+        f_sequence.append(f_number)
+        index += 1
+        f_number = get_n_fibonacci_sequence(input_string=str(index), at_index=True)
+        if f_number is None:
+            break
+
+    return f_sequence
+
+
+# endregion
 
 # region Functions dictionary definition
 functions = {
-    1:  get_square_root,
-    2:  max_in_sequence,
-    3:  apply_math_to_list
+    1: get_square_root,
+    2: max_in_sequence,
+    3: apply_math_to_list
 }
 # endregion
 
 
 # region __main__
 if __name__ == "__main__":
+    print(str(get_fibonacci_sequence_to_n("21")))
     while True:
         user_input = input("\nPlease enter task number to run or 'q' to exit:\n")
         if user_input.lower().strip() == "q":

@@ -130,6 +130,18 @@ class Homework03Test(ut.TestCase):
         self.assertEqual(hw03.get_n_fibonacci_sequence("5", True), 5)
         print("\t\t\t" + str(hw03.get_n_fibonacci_sequence("5", True)))
 
+    def test_get_fibonacci_sequence_to_n(self):
+        """Testing test_get_fibonacci_sequence_to_n() function"""
+
+        print("\t\tCorrect input...")
+        print("\t\t21...")
+        self.assertEqual(hw03.get_fibonacci_sequence_to_n("21"), [1, 1, 2, 3, 5, 8, 13])
+        print("\t\t\t" + str(hw03.get_fibonacci_sequence_to_n("21")))
+
+        print("\t\t1...")
+        self.assertEqual(hw03.get_fibonacci_sequence_to_n("1"), None)
+        print("\t\t\t" + str(hw03.get_fibonacci_sequence_to_n("1")))
+
 
 # region main
 if __name__ == "__main__":
