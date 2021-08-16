@@ -50,11 +50,9 @@ def is_string(prefix, input_string=None):
 
 
 # region String processing
-def process_string(prefix, input_string=None):
+def process_string(input_string=None):
     """
     The function converts a string to a list of numbers.
-    :param prefix:
-        The prefix for the error message string.
     :param input_string:
         String to be processed.
     :return:
@@ -65,10 +63,7 @@ def process_string(prefix, input_string=None):
 
     for element in list_of_strings:
         if element.isnumeric():
-            try:
-                list_of_numbers.append(float(element))
-            except (ValueError, TypeError):
-                print(str(prefix) + "Can't convert {} to a number.".format(element))
+            list_of_numbers.append(float(element))
 
     return list_of_numbers
 
