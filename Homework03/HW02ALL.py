@@ -24,6 +24,15 @@
 #14.
 """
 
+import math
+
+# region Input strings definition
+prompts = {
+    1: "Enter the number. Enter a negative number to stop typing."
+}
+
+
+# endregion
 
 # region Check input for string
 def is_string(prefix, input_string=None):
@@ -49,8 +58,8 @@ def is_string(prefix, input_string=None):
 # endregion
 
 
-# region String processing
-def process_string(input_string=None):
+# region Extract numbers from string.
+def extract_numbers(input_string=None):
     """
     The function converts a string to a list of numbers.
     :param input_string:
@@ -58,12 +67,11 @@ def process_string(input_string=None):
     :return:
         List of numbers.
     """
-    list_of_strings = input_string.stip().split()
     list_of_numbers = []
 
-    for element in list_of_strings:
-        if element.isnumeric():
-            list_of_numbers.append(float(element))
+    for sub_string in input_string.stip().split():
+        if sub_string.isnumeric():
+            list_of_numbers.append(float(sub_string))
 
     return list_of_numbers
 
@@ -73,7 +81,18 @@ def process_string(input_string=None):
 # region Task #1
 def get_square_root(prefix, input_string=None):
     if not is_string(input_string):
-        print(str(prefix), "The input variable must be a string.")
+        print(str(prefix) + "get_square_root():\tThe input variable must be a string.")
         return None
 
+    nums = extract_numbers(input_string)
+
+    if len(nums) != 1:
+        print(str(prefix) + "get_square_root():\tPlease enter only ONE number.")
+        return None
+
+    if nums[0] < 0.0:
+        print(str(prefix) + "get_square_root():\tPlease enter only POSITIVE number.")
+        return None
+
+    return round(math.sqrt(nums[0]), 3)
 # endregion
