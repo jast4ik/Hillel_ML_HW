@@ -106,6 +106,31 @@ class Homework03Test(ut.TestCase):
         self.assertEqual(hw03.apply_math_to_list("* -1 2.0 3.0"), -6.0)
         print(str(hw03.apply_math_to_list("* -1 2.0 3.0")))
 
+    def test_get_n_fibonacci_sequence(self):
+        """Testing get_n_fibonacci_sequence() function"""
+
+        print("\t\tEmpty string...")
+        self.assertEqual(hw03.get_n_fibonacci_sequence(""), None)
+
+        print("\t\tNegative index...")
+        self.assertEqual(hw03.get_n_fibonacci_sequence("-3"), None)
+
+        print("\t\tZero index...")
+        self.assertEqual(hw03.get_n_fibonacci_sequence("0"), None)
+
+        print("\t\tSmall float...")
+        self.assertEqual(hw03.get_n_fibonacci_sequence("0.35"), None)
+
+        print("\t\tCorrect input...")
+        print("\t\tOne to five...")
+        self.assertEqual(hw03.get_n_fibonacci_sequence("5"), [1, 1, 2, 3, 5])
+        print("\t\t\t" + str(hw03.get_n_fibonacci_sequence("5")))
+
+        print("\t\tFifth...")
+        self.assertEqual(hw03.get_n_fibonacci_sequence("5", True), 5)
+        print("\t\t\t" + str(hw03.get_n_fibonacci_sequence("5", True)))
+
+
 # region main
 if __name__ == "__main__":
     ut.main()

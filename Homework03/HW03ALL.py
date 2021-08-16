@@ -25,6 +25,7 @@
 """
 
 import math
+import numpy as np
 
 # region Input and result strings definition
 prompt_strings = {
@@ -211,6 +212,48 @@ def apply_math_to_list(input_string=None):
 # endregion
 
 
+# region Task 04
+def get_n_fibonacci_sequence(input_string=None, at_index=False):
+    """
+    The function returns the first N numbers of the Fibonacci sequence. Or number at index N.
+    :param input_string:
+        String to be processed.
+    :param at_index:
+        Optional. If we need a number with specific index.
+    :return:
+        Fibonacci sequence to N or number at N.
+    """
+
+    if not is_string("get_n_fibonacci_sequence():", input_string):
+        return None
+
+    nums = extract_numbers("get_n_fibonacci_sequence()\t", input_string)
+    if nums is None:
+        return None
+
+    if len(nums) != 1:
+        print("get_n_fibonacci_sequence():\tPlease enter only ONE number.")
+        return None
+
+    if int(nums[0]) <= 0:
+        print("get_n_fibonacci_sequence():\tN should be positive and nonzero.")
+        return None
+
+    f_matrix = np.matrix([[1, 1], [1, 0]])
+
+    f_sequence = []
+
+    if not at_index:
+        for index in range(1, int(nums[0]) + 1):
+            f_sequence.append((f_matrix ** (index - 1))[0, 0])
+    else:
+        f_sequence = (f_matrix ** (int(nums[0]) - 1))[0, 0]
+
+    return f_sequence
+
+# endregion
+
+
 # region Functions dictionary definition
 functions = {
     1:  get_square_root,
@@ -218,6 +261,7 @@ functions = {
     3:  apply_math_to_list
 }
 # endregion
+
 
 # region __main__
 if __name__ == "__main__":
