@@ -22,5 +22,63 @@
 #13.The number N is given and a list of N numbers. The number M is given and a list of M numbers.
     Print all numbers that are in both lists.
 #14.
-
 """
+
+
+# region Check input for string
+def is_string(prefix, input_string=None):
+    """
+    The function checks if the input variable is a string.
+    :param prefix:
+        The prefix for the error message string.
+    :param input_string:
+        Variable to check.
+    :return:
+        True if variable is a string. False if not.
+    """
+    try:
+        if isinstance(input_string, str):
+            return True
+        else:
+            return False
+    except Exception:
+        print(str(prefix) + "Error processing input data.")
+        return False
+
+
+# endregion
+
+
+# region String processing
+def process_string(prefix, input_string=None):
+    """
+    The function converts a string to a list of numbers.
+    :param prefix:
+        The prefix for the error message string.
+    :param input_string:
+        String to be processed.
+    :return:
+        List of numbers.
+    """
+    list_of_strings = input_string.stip().split()
+    list_of_numbers = []
+
+    for element in list_of_strings:
+        if element.isnumeric():
+            try:
+                list_of_numbers.append(float(element))
+            except (ValueError, TypeError):
+                print(str(prefix) + "Can't convert {} to a number.".format(element))
+
+    return list_of_numbers
+
+
+# endregion
+
+# region Task #1
+def get_square_root(prefix, input_string=None):
+    if not is_string(input_string):
+        print(str(prefix), "The input variable must be a string.")
+        return None
+
+# endregion

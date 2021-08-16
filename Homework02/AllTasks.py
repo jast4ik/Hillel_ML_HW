@@ -674,7 +674,7 @@ def define_if_word_comfortable(input_string=None):
         print("define_if_word_comfortable():\tCan't handle this type of input.")
         return None
 
-    left_hand_letters = ("q", "w", "e", "r", "a", "s", "d", "f", "g", "z", "x", "c", "v", "b")
+    left_hand_letters = ("q", "w", "e", "r", "t", "a", "s", "d", "f", "g", "z", "x", "c", "v", "b")
     work_string = input_string.strip()
 
     regex = re.compile("[^a-zA-Z]")
