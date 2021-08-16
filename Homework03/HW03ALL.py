@@ -57,6 +57,7 @@ def is_string(prefix, input_string=None):
         if isinstance(input_string, str):
             return True
         else:
+            print(str(prefix) + "Error processing input data.")
             return False
     except Exception:
         print(str(prefix) + "Error processing input data.")
@@ -88,7 +89,6 @@ def extract_numbers(prefix, input_string=None, skip_element_at_index=None):
                     list_of_numbers.append(float(sub_string))
             else:
                 list_of_numbers.append(float(sub_string))
-
         except (ValueError, TypeError):
             print(str(prefix) + "\tCan't convert {} to number.".format(str(sub_string)))
 
@@ -182,21 +182,24 @@ def apply_math_to_list(input_string=None):
     :return:
         Float: Sum or production of all elements in list.
     """
-    operators = ("+", "*")
-
     if not is_string("apply_math_to_list():", input_string):
         return None
+
+    nums = extract_numbers("apply_math_to_list():", input_string, 0)
+
+    if nums is None:
+        return None
+
+    if len(nums) < 2:
+        print("apply_math_to_list():\tThere should be at least TWO numbers.")
+        return None
+
+    operators = ("+", "*")
 
     operator = input_string.strip().split()[0]
 
     if operator not in operators:
         print("apply_math_to_list():\t Valid operators is {}.".format(str(operators)))
-        return None
-
-    nums = extract_numbers("apply_math_to_list():", input_string, 0)
-
-    if len(nums) < 2:
-        print("apply_math_to_list():\tThere should be at least TWO numbers.")
         return None
 
     if operator == "+":
