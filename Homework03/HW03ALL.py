@@ -44,7 +44,8 @@ prompt_strings = {
     2: "\nEnter a sequence of numbers.",
     3: "\nEnter the symbol of the mathematical operation and the sequence of numbers to which it should be applied.",
     4: "\nEnter the number of the number in the Fibanacci sequence.",
-    5: "\nEnter the number."
+    5: "\nEnter the number.",
+    6: "\nEnter the start and end of the range, step."
 }
 
 result_strings = {
@@ -52,13 +53,19 @@ result_strings = {
     2: "The maximum in the sequence is the number {}.",
     3: "The result of a mathematical operation on all elements of the sequence is {}.",
     4: "Fibonacci sequence up to specified number is {}.",
-    5: "Elements of the Fibanacci sequence less than the specified number are {}."
+    5: "Elements of the Fibanacci sequence less than the specified number are {}.",
+    6: "Table of correspondence:\n"
 }
 
 
 # endregion
 
 # region Auxiliary functions
+def convert_to_fahrenheit(input_temp=0.0):
+    """Function returns tuple (input_temp, input_temp -> F)."""
+    return round(input_temp, 2), round((input_temp * 9.0 / 5.0) + 32.0, 2)
+
+
 def is_string(prefix, input_string=None):
     """
     The function checks if the input variable is a string.
@@ -75,7 +82,7 @@ def is_string(prefix, input_string=None):
         else:
             print(str(prefix) + "Error processing input data.")
             return False
-    except Exception:
+    except (Exception,):
         print(str(prefix) + "Error processing input data.")
         return False
 
@@ -309,13 +316,54 @@ def get_fibonacci_sequence_to_n(input_string=None):
 
 # endregion
 
+
+# region Task 06
+def get_cel_fahr_cor_table(input_string=None):
+    """
+    The function returns temperature pairs. Celsius and corresponding Fahrenheit.
+    :param input_string:
+        String to be processed.
+    :return:
+        List of tuples: Celsius -> Fahrenheit
+    """
+    if not is_string("get_cel_fahr_cor_table():", input_string):
+        return None
+
+    nums = extract_numbers("get_cel_fahr_cor_table()\t", input_string)
+    if nums is None:
+        return None
+
+    if len(nums) != 3:
+        print("get_cel_fahr_cor_table():\tPlease enter THREE numbers.")
+        return None
+
+    start_temp = min(nums[0:2])
+    end_temp = max(nums[0:2])
+    step = math.fabs(nums[2])
+
+    current_temp = start_temp
+    correspondence = list()
+    correspondence.append(convert_to_fahrenheit(start_temp))
+
+    while current_temp < end_temp - step:
+        current_temp += step
+        correspondence.append(convert_to_fahrenheit(current_temp))
+
+    correspondence.append(convert_to_fahrenheit(end_temp))
+    return correspondence
+
+
+# endregion
+
+
 # region Functions dictionary definition
 functions = {
     1: get_square_root,
     2: max_in_sequence,
     3: apply_math_to_list,
     4: get_n_fibonacci_sequence,
-    5: get_fibonacci_sequence_to_n
+    5: get_fibonacci_sequence_to_n,
+    6: get_cel_fahr_cor_table
 }
 # endregion
 
@@ -344,5 +392,10 @@ if __name__ == "__main__":
             if result is None:
                 continue
 
-            print(result_strings[task_to_run].format(str(result)))
+            if task_to_run in range(1, 6):
+                print(result_strings[task_to_run].format(str(result)))
+            elif task_to_run == 6:
+                for element in result:
+                    print("{}C\tcorresponds to\t{}F".format(str(element[0]), str(element[1])))
+
 # endregion

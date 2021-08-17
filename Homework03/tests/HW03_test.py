@@ -131,7 +131,7 @@ class Homework03Test(ut.TestCase):
         print("\t\t\t" + str(hw03.get_n_fibonacci_sequence("5", True)))
 
     def test_get_fibonacci_sequence_to_n(self):
-        """Testing test_get_fibonacci_sequence_to_n() function"""
+        """Testing get_fibonacci_sequence_to_n() function"""
 
         print("\t\tCorrect input...")
         print("\t\t21...")
@@ -141,6 +141,31 @@ class Homework03Test(ut.TestCase):
         print("\t\t1...")
         self.assertEqual(hw03.get_fibonacci_sequence_to_n("1"), None)
         print("\t\t\t" + str(hw03.get_fibonacci_sequence_to_n("1")))
+
+    def test_get_cel_fahr_cor_table(self):
+        """Testing get_cel_fahr_cor_table() function"""
+
+        print("\t\tEmpty string...")
+        self.assertEqual(hw03.get_cel_fahr_cor_table(""), None)
+
+        print("\t\tOne number...")
+        self.assertEqual(hw03.get_cel_fahr_cor_table("1.0"), None)
+
+        print("\t\tTwo numbers...")
+        self.assertEqual(hw03.get_cel_fahr_cor_table("1.0 2.0"), None)
+
+        print("\t\tNo numbers...")
+        self.assertEqual(hw03.get_cel_fahr_cor_table("fg dfg gf gfd fgd "), None)
+
+        print("\t\tCorrect input [-1.23 1.23 1]...")
+        self.assertEqual(hw03.get_cel_fahr_cor_table("-1.23 1.23 1"),
+                         [(-1.23, 29.79), (-0.23, 31.59), (0.77, 33.39), (1.23, 34.21)])
+        print(str(hw03.get_cel_fahr_cor_table("-1.23 1.23 1")))
+
+        print("\t\tCorrect input [1.23 -1.23 1]...")
+        self.assertEqual(hw03.get_cel_fahr_cor_table("1.23 -1.23 1"),
+                         [(-1.23, 29.79), (-0.23, 31.59), (0.77, 33.39), (1.23, 34.21)])
+        print(str(hw03.get_cel_fahr_cor_table("1.23 -1.23 1")))
 
 
 # region main
