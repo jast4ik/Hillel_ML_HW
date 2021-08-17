@@ -48,7 +48,8 @@ prompt_strings = {
     6: "\nEnter the start and end of the range, step.",
     8: "\nEnter a sequence of numbers.",
     9: "\nEnter a sequence of numbers.",
-    10: "\nEnter a sequence of numbers."
+    10: "\nEnter a sequence of numbers.",
+    12: "\nEnter a sequence of numbers."
 }
 
 result_strings = {
@@ -60,7 +61,9 @@ result_strings = {
     6: "Table of correspondence:\n",
     8: "Numbers refer to the arithmetic mean as follows.",
     9: "The numbers greater than the neighbors in the list:\n {}",
-    10: "Sequence in reverse order: {}."
+    10: "Sequence in reverse order: {}.",
+    12: "Numbers that appears only once in a sequence:\n{}.",
+    13: "Numbers that appears in bots sequences is:\n{}"
 }
 
 
@@ -93,7 +96,7 @@ def is_string(prefix, input_string=None):
         return False
 
 
-def extract_numbers(prefix, input_string=None, skip_element_at_index=None):
+def extract_numbers(prefix="", input_string=None, skip_element_at_index=None):
     """
     The function converts a string to a list of numbers.
     :param prefix:
@@ -445,6 +448,63 @@ def reverse_list(input_string=None):
 # endregion
 
 
+# region Task 12
+def get_unique_numbers(input_string=None):
+    """The function returns numbers that appears ony once in a sequence."""
+
+    if not is_string("get_unique_numbers():", input_string):
+        return None
+
+    nums = extract_numbers("get_unique_numbers()\t", input_string)
+    if nums is None or len(nums) == 0:
+        return None
+
+    one_instance_nums = list(set(nums))
+    unique_nums = list()
+
+    for num in one_instance_nums:
+        if nums.count(num) == 1:
+            unique_nums.append(num)
+
+    if len(unique_nums) > 0:
+        return unique_nums
+    else:
+        return "There is no unique elements in the sequence."
+
+
+# endregion
+
+
+# region Task 13
+def get_numbers_in_two_sequences(sequence_1=None, sequence_2=None):
+    """The function returns numbers that present in both sequences."""
+
+    nums_1 = extract_numbers("get_numbers_in_two_sequences()\t", sequence_1)
+    nums_2 = extract_numbers("get_numbers_in_two_sequences()\t", sequence_2)
+
+    if nums_1 is None or len(nums_1) == 0:
+        return None
+
+    if nums_2 is None or len(nums_2) == 0:
+        return None
+
+    nums_in_both_lists = list()
+
+    for num in nums_1:
+        if num in nums_2:
+            nums_in_both_lists.append(num)
+
+    nums_in_both_lists = list(set(nums_in_both_lists))
+
+    if len(nums_in_both_lists) > 0:
+        return nums_in_both_lists
+    else:
+        return "The entered sequences do not contain the same elements."
+
+
+# endregion
+
+
 # region Functions dictionary definition
 functions = {
     1: get_square_root,
@@ -455,7 +515,9 @@ functions = {
     6: get_cel_fahr_cor_table,
     8: get_ratio,
     9: greater_than_neighbors,
-    10: reverse_list
+    10: reverse_list,
+    12: get_unique_numbers,
+    13: get_numbers_in_two_sequences
 }
 # endregion
 
@@ -475,15 +537,47 @@ if __name__ == "__main__":
             continue
 
         while True:
-            user_input = input(prompt_strings[task_to_run] + " ('q' to return to the task selection):\n")
+            result = None
+            same_input_scheme = (1, 2, 3, 4, 5, 6, 9, 10, 12)
+            try:
+                if task_to_run in same_input_scheme:
+                    user_input = input(prompt_strings[task_to_run] + " ('q' to return to the task selection):\n")
+                elif task_to_run == 13:
+                    sequences = list()
+
+                    user_input = input("Enter first sequence of numbers:\n")
+                    if user_input.lower().strip() == "q":
+                        break
+                    else:
+                        sequences.append(user_input)
+
+                    user_input = input("Enter second sequence of numbers:\n")
+                    if user_input.lower().strip() == "q":
+                        break
+                    else:
+                        sequences.append(user_input)
+
+                    result = get_numbers_in_two_sequences(sequences[0], sequences[1])
+            except (Exception,):
+                print("Main:\tCan't run specified task.")
+                break
+
             if user_input.lower().strip() == "q":
                 break
 
-            result = functions[task_to_run](user_input)
+            try:
+                if task_to_run in same_input_scheme:
+                    result = functions[task_to_run](user_input)
+            except (Exception,):
+                print("Main:\tCan't run specified task.")
+                continue
+
             if result is None:
                 continue
 
-            if task_to_run in range(1, 6) or task_to_run in range(9, 11):
+            same_output_scheme = (1, 2, 3, 4, 5, 6, 9, 10, 12, 13)
+
+            if task_to_run in same_output_scheme:
                 print(result_strings[task_to_run].format(str(result)))
             elif task_to_run == 6:
                 print(result_strings[task_to_run].format(str(result)))
