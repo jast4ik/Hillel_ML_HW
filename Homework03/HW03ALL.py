@@ -47,7 +47,8 @@ prompt_strings = {
     5: "\nEnter the number.",
     6: "\nEnter the start and end of the range, step.",
     8: "\nEnter a sequence of numbers.",
-    9: "\nEnter a sequence of numbers."
+    9: "\nEnter a sequence of numbers.",
+    10: "\nEnter a sequence of numbers."
 }
 
 result_strings = {
@@ -58,7 +59,8 @@ result_strings = {
     5: "Elements of the Fibanacci sequence less than the specified number are {}.",
     6: "Table of correspondence:\n",
     8: "Numbers refer to the arithmetic mean as follows.",
-    9: "The numbers greater than the neighbors in the list:\n {}"
+    9: "The numbers greater than the neighbors in the list:\n {}",
+    10: "Sequence in reverse order: {}."
 }
 
 
@@ -390,6 +392,8 @@ def get_ratio(input_string):
 
     ratio.sort(key=lambda x: (x[1], x[0]))
     return ratio
+
+
 # endregion
 
 
@@ -420,6 +424,24 @@ def greater_than_neighbors(input_string=None):
     else:
         return "There is no such numbers in the given sequence."
 
+
+# endregion
+
+
+# region Task 10
+def reverse_list(input_string=None):
+    """The function returns given sequence in reverse order"""
+
+    if not is_string("reverse_list():", input_string):
+        return None
+
+    nums = extract_numbers("reverse_list()\t", input_string)
+    if nums is None or len(nums) == 0:
+        return None
+
+    return nums[::-1]
+
+
 # endregion
 
 
@@ -432,7 +454,8 @@ functions = {
     5: get_fibonacci_sequence_to_n,
     6: get_cel_fahr_cor_table,
     8: get_ratio,
-    9: greater_than_neighbors
+    9: greater_than_neighbors,
+    10: reverse_list
 }
 # endregion
 
@@ -460,7 +483,7 @@ if __name__ == "__main__":
             if result is None:
                 continue
 
-            if task_to_run in range(1, 6) or task_to_run == 9:
+            if task_to_run in range(1, 6) or task_to_run in range(9, 11):
                 print(result_strings[task_to_run].format(str(result)))
             elif task_to_run == 6:
                 print(result_strings[task_to_run].format(str(result)))
