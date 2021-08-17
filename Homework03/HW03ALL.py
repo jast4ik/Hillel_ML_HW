@@ -21,7 +21,12 @@
 #12.The number N is given and a list of N numbers. Print all numbers that appear in the list only once.
 #13.The number N is given and a list of N numbers. The number M is given and a list of M numbers.
     Print all numbers that are in both lists.
-#14.
+#14.Implement a CRM system that should accept and process the following types of requests:
+        - add employee named <name> to the system (add);
+        - check if there is an employee named <name> in the system (find);
+        - list all employees (list);
+        - remove employee named <name> from the system (delete);
+        - shit down the system (stop).
 """
 
 import math
@@ -31,13 +36,17 @@ import numpy as np
 prompt_strings = {
     1: "\nEnter a number to calculate the square root.",
     2: "\nEnter a sequence of numbers.",
-    3: "\nEnter the symbol of the mathematical operation and the sequence of numbers to which it should be applied."
+    3: "\nEnter the symbol of the mathematical operation and the sequence of numbers to which it should be applied.",
+    4: "\nEnter the number of the number in the Fibanacci sequence.",
+    5: "\nEnter the number."
 }
 
 result_strings = {
     1: "The square root of the entered number is {}.",
     2: "The maximum in the sequence is the number {}.",
-    3: "The result of a mathematical operation on all elements of the sequence is {}."
+    3: "The result of a mathematical operation on all elements of the sequence is {}.",
+    4: "Fibonacci sequence up to specified number is {}.",
+    5: "Elements of the Fibanacci sequence less than the specified number are {}."
 }
 
 
@@ -298,7 +307,9 @@ def get_fibonacci_sequence_to_n(input_string=None):
 functions = {
     1: get_square_root,
     2: max_in_sequence,
-    3: apply_math_to_list
+    3: apply_math_to_list,
+    4: get_n_fibonacci_sequence,
+    5: get_fibonacci_sequence_to_n
 }
 # endregion
 
