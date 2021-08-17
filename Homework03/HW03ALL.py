@@ -13,7 +13,7 @@
 #7.     The number N is given. After that, in the order of traversal, N pairs of coordinates of the polygon on the plane
         are entered. Find the perimeter of this polygon.
 #8.     The number N is given and a list of N numbers. For each number from the list, output its ratio to the arithmetic
-        mean of this list (less, more, equal).
+        mean of this list (less, greater, equal).
 #9.     The number N is given and a list of N numbers.
         Print all numbers greater than both of their neighbors in the list.
 #10.    The number N is given and a list of N numbers. Display the list in reverse order.
@@ -45,7 +45,9 @@ prompt_strings = {
     3: "\nEnter the symbol of the mathematical operation and the sequence of numbers to which it should be applied.",
     4: "\nEnter the number of the number in the Fibanacci sequence.",
     5: "\nEnter the number.",
-    6: "\nEnter the start and end of the range, step."
+    6: "\nEnter the start and end of the range, step.",
+    8: "\nEnter a sequence of numbers.",
+    9: "\nEnter a sequence of numbers."
 }
 
 result_strings = {
@@ -54,7 +56,9 @@ result_strings = {
     3: "The result of a mathematical operation on all elements of the sequence is {}.",
     4: "Fibonacci sequence up to specified number is {}.",
     5: "Elements of the Fibanacci sequence less than the specified number are {}.",
-    6: "Table of correspondence:\n"
+    6: "Table of correspondence:\n",
+    8: "Numbers refer to the arithmetic mean as follows.",
+    9: "The numbers greater than the neighbors in the list:\n {}"
 }
 
 
@@ -356,6 +360,69 @@ def get_cel_fahr_cor_table(input_string=None):
 # endregion
 
 
+# region Task 08
+def get_ratio(input_string):
+    """
+    The function determines the ratio of each number in the list to its arithmetic mean.
+    :param input_string:
+        String to be processed.
+    :return:
+        List of tuples: (number, ratio, arithmetic mean)
+    """
+    if not is_string("get_ratio():", input_string):
+        return None
+
+    nums = extract_numbers("get_ratio()\t", input_string)
+    if nums is None or len(nums) == 0:
+        return None
+
+    a_mean = sum(nums) / len(nums)
+
+    ratio = list()
+
+    for num in nums:
+        if num > a_mean:
+            ratio.append((num, "greater than", a_mean))
+        elif num < a_mean:
+            ratio.append((num, "less than", a_mean))
+        else:
+            ratio.append((num, "equal to", a_mean))
+
+    ratio.sort(key=lambda x: (x[1], x[0]))
+    return ratio
+# endregion
+
+
+# region Task 09
+def greater_than_neighbors(input_string=None):
+    """
+    The function returns numbers greater than their neighbors.
+    :param input_string:
+        String to be processed.
+    :return:
+        List: List of numbers that greater than their neighbors.
+    """
+    if not is_string("greater_than_neighbors():", input_string):
+        return None
+
+    nums = extract_numbers("greater_than_neighbors()\t", input_string)
+    if nums is None or len(nums) == 0:
+        return None
+
+    greater_nums = list()
+    for index, num in enumerate(nums[1:-1]):
+        index += 1
+        if num > nums[index - 1] and num > nums[index + 1]:
+            greater_nums.append(num)
+
+    if len(greater_nums) != 0:
+        return greater_nums
+    else:
+        return "There is no such numbers in the given sequence."
+
+# endregion
+
+
 # region Functions dictionary definition
 functions = {
     1: get_square_root,
@@ -363,14 +430,15 @@ functions = {
     3: apply_math_to_list,
     4: get_n_fibonacci_sequence,
     5: get_fibonacci_sequence_to_n,
-    6: get_cel_fahr_cor_table
+    6: get_cel_fahr_cor_table,
+    8: get_ratio,
+    9: greater_than_neighbors
 }
 # endregion
 
 
 # region __main__
 if __name__ == "__main__":
-    print(str(get_fibonacci_sequence_to_n("21")))
     while True:
         user_input = input("\nPlease enter task number to run or 'q' to exit:\n")
         if user_input.lower().strip() == "q":
@@ -392,10 +460,15 @@ if __name__ == "__main__":
             if result is None:
                 continue
 
-            if task_to_run in range(1, 6):
+            if task_to_run in range(1, 6) or task_to_run == 9:
                 print(result_strings[task_to_run].format(str(result)))
             elif task_to_run == 6:
+                print(result_strings[task_to_run].format(str(result)))
                 for element in result:
                     print("{}C\tcorresponds to\t{}F".format(str(element[0]), str(element[1])))
+            elif task_to_run == 8:
+                print(result_strings[task_to_run].format(str(result)))
+                for element in result:
+                    print("{}\tis {}\t{}.".format(element[0], element[1], element[2]))
 
 # endregion
