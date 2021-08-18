@@ -47,6 +47,7 @@ prompt_strings = {
     4: "\nEnter the number of the number in the Fibanacci sequence.",
     5: "\nEnter the number.",
     6: "\nEnter the start and end of the range, step.",
+    7: "\nEnter the sequence of vertices of the polygon in the format (A B).",
     8: "\nEnter a sequence of numbers.",
     9: "\nEnter a sequence of numbers.",
     10: "\nEnter a sequence of numbers.",
@@ -61,6 +62,7 @@ result_strings = {
     4: "Fibonacci sequence up to specified number is {}.",
     5: "Elements of the Fibanacci sequence less than the specified number are {}.",
     6: "Table of correspondence:\n",
+    7: "Polygon perimeter is {}:\t",
     8: "Numbers refer to the arithmetic mean as follows.",
     9: "The numbers greater than the neighbors in the list:\n {}",
     10: "Sequence in reverse order: {}.",
@@ -127,6 +129,7 @@ def extract_tuples(prefix, input_string=None):
 
     if tuples is None or len(tuples) == 0:
         print(str(prefix) + "There is no tuples.")
+        return None
 
     for t_index, current_t in enumerate(tuples):
         input_string = input_string.replace("({})".format(current_t), "")
@@ -351,6 +354,7 @@ def get_polygon_perimeter(input_string=None):
 
     if len(vertexes) < 2:
         print("get_polygon_perimeter():\tThere should be minimum TWO vertexes.")
+        return None
 
     perimeter = 0.0
 
@@ -364,6 +368,7 @@ def get_polygon_perimeter(input_string=None):
         (vertexes[0][0] - vertexes[-1][0]) ** 2
         + (vertexes[0][1] - vertexes[-1][1]) ** 2
     )
+
     return round(perimeter, 3)
 # endregion
 
@@ -547,6 +552,7 @@ functions = {
     4: get_n_fibonacci_sequence,
     5: get_fibonacci_sequence_to_n,
     6: get_cel_fahr_cor_table,
+    7: get_polygon_perimeter,
     8: get_ratio,
     9: greater_than_neighbors,
     10: reverse_list,
@@ -574,7 +580,7 @@ if __name__ == "__main__":
 
         while True:
             result = None
-            same_input_scheme = (1, 2, 3, 4, 5, 6, 9, 10, 11, 12)
+            same_input_scheme = (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12)
             try:
                 if task_to_run in same_input_scheme:
                     user_input = input(prompt_strings[task_to_run] + " ('q' to return to the task selection):\n")
@@ -611,7 +617,7 @@ if __name__ == "__main__":
             if result is None:
                 continue
 
-            same_output_scheme = (1, 2, 3, 4, 5, 6, 9, 10, 11, 12, 13)
+            same_output_scheme = (1, 2, 3, 4, 5, 7, 9, 10, 11, 12, 13)
 
             if task_to_run in same_output_scheme:
                 print(result_strings[task_to_run].format(str(result)))
