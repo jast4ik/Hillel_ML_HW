@@ -50,6 +50,7 @@ prompt_strings = {
     8: "\nEnter a sequence of numbers.",
     9: "\nEnter a sequence of numbers.",
     10: "\nEnter a sequence of numbers.",
+    11: "\nEnter a sequence of numbers and the range in the format (A B).",
     12: "\nEnter a sequence of numbers."
 }
 
@@ -63,6 +64,7 @@ result_strings = {
     8: "Numbers refer to the arithmetic mean as follows.",
     9: "The numbers greater than the neighbors in the list:\n {}",
     10: "Sequence in reverse order: {}.",
+    11: "Sequence in the selected range is {}.",
     12: "Numbers that appears only once in a sequence:\n{}.",
     13: "Numbers that appears in bots sequences is:\n{}"
 }
@@ -413,30 +415,27 @@ def get_vals_at_range(input_string=None):
     if not is_string("get_vals_at_range():", input_string):
         return None
 
-    indexes, input_string = extract_tuples("get_vals_at_range()\t", input_string)
+    indexes, input_string = extract_tuples("get_vals_at_range():\t", input_string)
 
     if indexes is None or len(indexes) == 0:
         return None
 
-    nums = extract_numbers("get_vals_at_range()\t", input_string)
+    nums = extract_numbers("get_vals_at_range():\t", input_string)
     if nums is None or len(nums) == 0:
         return None
 
-
-
     if len(indexes) > 1:
-        print("get_vals_at_range()\tPlease input only ONE range.")
+        print("get_vals_at_range():\tPlease input only ONE range.")
 
     if len(indexes[0]) != 2:
-        print("get_vals_at_range()\tThe range must contain TWO numbers.")
+        print("get_vals_at_range():\tThe range must contain TWO numbers.")
         return None
 
     if indexes[0][0] not in range(len(nums)) or indexes[0][1] not in range(len(nums)):
-        print("get_vals_at_range()\tIndexes out of range.")
+        print("get_vals_at_range():\tIndexes out of range.")
         return None
 
     indexes[0] = [int(min(indexes[0])), int(max(indexes[0]))]
-    print(input_string)
 
     if indexes[0][0] != indexes[0][1]:
         return nums[indexes[0][0]:indexes[0][1]]
@@ -519,6 +518,7 @@ functions = {
     8: get_ratio,
     9: greater_than_neighbors,
     10: reverse_list,
+    11: get_vals_at_range,
     12: get_unique_numbers,
     13: get_numbers_in_two_sequences
 }
@@ -527,7 +527,6 @@ functions = {
 
 # region __main__
 if __name__ == "__main__":
-    print(get_vals_at_range("1 2 3 4 (1 1)"))
     while True:
         user_input = input("\nPlease enter task number to run or 'q' to exit:\n")
         if user_input.lower().strip() == "q":
@@ -542,7 +541,7 @@ if __name__ == "__main__":
 
         while True:
             result = None
-            same_input_scheme = (1, 2, 3, 4, 5, 6, 9, 10, 12)
+            same_input_scheme = (1, 2, 3, 4, 5, 6, 9, 10, 11, 12)
             try:
                 if task_to_run in same_input_scheme:
                     user_input = input(prompt_strings[task_to_run] + " ('q' to return to the task selection):\n")
@@ -579,7 +578,7 @@ if __name__ == "__main__":
             if result is None:
                 continue
 
-            same_output_scheme = (1, 2, 3, 4, 5, 6, 9, 10, 12, 13)
+            same_output_scheme = (1, 2, 3, 4, 5, 6, 9, 10, 11, 12, 13)
 
             if task_to_run in same_output_scheme:
                 print(result_strings[task_to_run].format(str(result)))
