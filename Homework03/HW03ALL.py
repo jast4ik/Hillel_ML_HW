@@ -72,7 +72,7 @@ result_strings = {
 
 # region Auxiliary functions
 def convert_to_fahrenheit(input_temp=0.0):
-    """Function returns tuple (input_temp, input_temp -> F)."""
+    """The function returns tuple (input_temp, input_temp -> F)."""
     return round(input_temp, 2), round((input_temp * 9.0 / 5.0) + 32.0, 2)
 
 
@@ -89,7 +89,7 @@ def is_string(prefix, input_string=None):
         return False
 
 
-def extract_numbers(prefix="", input_string=None, skip_element_at_index=None):
+def extract_numbers(prefix, input_string=None, skip_element_at_index=None):
     """The function converts a string to a list of numbers."""
     if not is_string(prefix, input_string):
         print(str(prefix) + "\tThe input variable must be a string.")
@@ -112,6 +112,36 @@ def extract_numbers(prefix="", input_string=None, skip_element_at_index=None):
         return None
 
     return list_of_numbers
+
+
+def extract_tuples(prefix, input_string=None):
+    """The function returns a tuples from string."""
+
+    if not is_string(prefix, input_string):
+        print(str(prefix) + "\tThe input variable must be a string.")
+        return None
+
+    tuples = re.findall(r'\((.*?)\)', input_string)
+
+    for t_index, current_t in enumerate(tuples):
+        current_t = re.findall(r"[-+]?\d*\.?\d+|\d+", current_t)
+
+        if current_t is None:
+            print("extract_tuples()\tCan't extract tuple from {}.".format(str(current_t)))
+            return None
+
+        for e_index, num in enumerate(current_t):
+            try:
+                current_t[e_index] = float(num)
+
+            except (TypeError, ValueError):
+                return
+
+        tuples[t_index] = current_t
+
+    print(tuples)
+
+    return None
 
 
 def get_task_to_run(input_string=None):
@@ -454,13 +484,8 @@ functions = {
 
 # region __main__
 if __name__ == "__main__":
+    extract_tuples("extract_tuples():\t", "1 2 3 4 (4 4) (6.54, 4.3)")
     while True:
-        a = re.findall(r'\((.*?)\)', "1 2 3 4 (5.23, -8) (+0 -2.456)")
-        for idx, i in enumerate(a):
-            print(type(i))
-            i = re.findall(r"[-+]?\d*\.?\d+|\d+", i)
-            a[idx] = i
-        print(a)
         user_input = input("\nPlease enter task number to run or 'q' to exit:\n")
         if user_input.lower().strip() == "q":
             break
