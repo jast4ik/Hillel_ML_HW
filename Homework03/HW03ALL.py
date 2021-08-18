@@ -76,15 +76,7 @@ def convert_to_fahrenheit(input_temp=0.0):
 
 
 def is_string(prefix, input_string=None):
-    """
-    The function checks if the input variable is a string.
-    :param prefix:
-        The prefix for the error message string.
-    :param input_string:
-        Variable to check.
-    :return:
-        True if variable is a string. False if not.
-    """
+    """The function checks if the input variable is a string."""
     try:
         if isinstance(input_string, str):
             return True
@@ -97,17 +89,7 @@ def is_string(prefix, input_string=None):
 
 
 def extract_numbers(prefix="", input_string=None, skip_element_at_index=None):
-    """
-    The function converts a string to a list of numbers.
-    :param prefix:
-        The prefix for the error message string.
-    :param input_string:
-        String to be processed.
-    :param skip_element_at_index
-        Skip element at specified index.
-    :return:
-        List of numbers.
-    """
+    """The function converts a string to a list of numbers."""
     if not is_string(prefix, input_string):
         print(str(prefix) + "\tThe input variable must be a string.")
         return None
@@ -132,13 +114,7 @@ def extract_numbers(prefix="", input_string=None, skip_element_at_index=None):
 
 
 def get_task_to_run(input_string=None):
-    """Returns the number of task to run.
-
-    :param input_string:
-        String to be processed.
-    :return:
-        Integer: Number of the task.
-    """
+    """Returns the number of task to run."""
     if not is_string("get_task_to_run():", input_string):
         return None
 
@@ -161,14 +137,7 @@ def get_task_to_run(input_string=None):
 
 # region Task #1
 def get_square_root(input_string=None):
-    """
-    The function returns the square root of the entered number.
-
-    :param input_string:
-        String to be processed.
-    :return:
-        Float. Square root of a number.
-    """
+    """The function returns the square root of the entered number."""
     nums = extract_numbers("get_square_root():", input_string)
     if nums is None:
         return None
@@ -187,14 +156,7 @@ def get_square_root(input_string=None):
 # endregion
 # region Task 02
 def max_in_sequence(input_string=None):
-    """
-    The function returns the maximum number entered.
-
-    :param input_string:
-        String to be processed.
-    :return:
-        Float:  Maximum in sequence.
-    """
+    """The function returns the maximum number entered."""
     nums = extract_numbers("max_in_sequence():", input_string)
     if nums is None:
         return None
@@ -207,13 +169,7 @@ def max_in_sequence(input_string=None):
 
 # region Task 03
 def apply_math_to_list(input_string=None):
-    """
-    The function returns the sum or product of all the elements in the list.
-    :param input_string:
-        String to be processed.
-    :return:
-        Float: Sum or production of all elements in list.
-    """
+    """The function returns the sum or product of all the elements in the list."""
     if not is_string("apply_math_to_list():", input_string):
         return None
 
@@ -247,15 +203,7 @@ def apply_math_to_list(input_string=None):
 
 # region Task 04
 def get_n_fibonacci_sequence(input_string=None, at_index=False):
-    """
-    The function returns the first N numbers of the Fibonacci sequence. Or number at index N.
-    :param input_string:
-        String to be processed.
-    :param at_index:
-        Optional. If we need a number with specific index.
-    :return:
-        Fibonacci sequence to N or number at N.
-    """
+    """The function returns the first N numbers of the Fibonacci sequence. Or number at index N."""
 
     if not is_string("get_n_fibonacci_sequence():", input_string):
         return None
@@ -289,13 +237,7 @@ def get_n_fibonacci_sequence(input_string=None, at_index=False):
 
 # region Task 05
 def get_fibonacci_sequence_to_n(input_string=None):
-    """
-    Function returns a Fibonacci sequence less than a given number.
-    :param input_string:
-        String to be processed.
-    :return:
-        Fibonacci sequence less than N.
-    """
+    """The function returns a Fibonacci sequence less than a given number."""
     if not is_string("get_fibonacci_sequence_to_n():", input_string):
         return None
 
@@ -328,13 +270,7 @@ def get_fibonacci_sequence_to_n(input_string=None):
 
 # region Task 06
 def get_cel_fahr_cor_table(input_string=None):
-    """
-    The function returns temperature pairs. Celsius and corresponding Fahrenheit.
-    :param input_string:
-        String to be processed.
-    :return:
-        List of tuples: Celsius -> Fahrenheit
-    """
+    """The function returns temperature pairs. Celsius and corresponding Fahrenheit."""
     if not is_string("get_cel_fahr_cor_table():", input_string):
         return None
 
@@ -367,13 +303,7 @@ def get_cel_fahr_cor_table(input_string=None):
 
 # region Task 08
 def get_ratio(input_string):
-    """
-    The function determines the ratio of each number in the list to its arithmetic mean.
-    :param input_string:
-        String to be processed.
-    :return:
-        List of tuples: (number, ratio, arithmetic mean)
-    """
+    """The function determines the ratio of each number in the list to its arithmetic mean."""
     if not is_string("get_ratio():", input_string):
         return None
 
@@ -402,13 +332,7 @@ def get_ratio(input_string):
 
 # region Task 09
 def greater_than_neighbors(input_string=None):
-    """
-    The function returns numbers greater than their neighbors.
-    :param input_string:
-        String to be processed.
-    :return:
-        List: List of numbers that greater than their neighbors.
-    """
+    """The function returns numbers greater than their neighbors."""
     if not is_string("greater_than_neighbors():", input_string):
         return None
 
@@ -476,22 +400,27 @@ def get_unique_numbers(input_string=None):
 
 
 # region Task 13
-def get_numbers_in_two_sequences(sequence_1=None, sequence_2=None):
+def get_numbers_in_two_sequences(num_sequences=None):
     """The function returns numbers that present in both sequences."""
 
-    nums_1 = extract_numbers("get_numbers_in_two_sequences()\t", sequence_1)
-    nums_2 = extract_numbers("get_numbers_in_two_sequences()\t", sequence_2)
+    nums_list = list()
+    for sequence in num_sequences:
+        if not is_string("get_numbers_in_two_sequences()\t", sequence):
+            return None
+        else:
+            current_s = extract_numbers("get_numbers_in_two_sequences()\t", sequence)
+            if current_s is None or len(current_s) == 0:
+                return None
+            else:
+                nums_list.append(current_s)
 
-    if nums_1 is None or len(nums_1) == 0:
-        return None
-
-    if nums_2 is None or len(nums_2) == 0:
-        return None
+    if len(nums_list) != 2:
+        print("get_numbers_in_two_sequences():\t There should be TWO sequence of numbers.")
 
     nums_in_both_lists = list()
 
-    for num in nums_1:
-        if num in nums_2:
+    for num in nums_list[0]:
+        if num in nums_list[1]:
             nums_in_both_lists.append(num)
 
     nums_in_both_lists = list(set(nums_in_both_lists))
@@ -557,7 +486,7 @@ if __name__ == "__main__":
                     else:
                         sequences.append(user_input)
 
-                    result = get_numbers_in_two_sequences(sequences[0], sequences[1])
+                    result = get_numbers_in_two_sequences(sequences)
             except (Exception,):
                 print("Main:\tCan't run specified task.")
                 break
