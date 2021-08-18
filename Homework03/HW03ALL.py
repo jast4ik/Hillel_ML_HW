@@ -123,7 +123,11 @@ def extract_tuples(prefix, input_string=None):
 
     tuples = re.findall(r'\((.*?)\)', input_string)
 
+    if tuples is None or len(tuples) == 0:
+        print(str(prefix) + "There is no tuples.")
+
     for t_index, current_t in enumerate(tuples):
+        input_string = input_string.replace("({})".format(current_t), "")
         current_t = re.findall(r"[-+]?\d*\.?\d+|\d+", current_t)
 
         if current_t is None:
@@ -135,11 +139,11 @@ def extract_tuples(prefix, input_string=None):
                 current_t[e_index] = float(num)
 
             except (TypeError, ValueError):
-                return
+                return None, input_string
 
         tuples[t_index] = current_t
 
-    return tuples
+    return tuples, input_string
 
 
 def get_task_to_run(input_string=None):
@@ -409,25 +413,38 @@ def get_vals_at_range(input_string=None):
     if not is_string("get_vals_at_range():", input_string):
         return None
 
+    indexes, input_string = extract_tuples("get_vals_at_range()\t", input_string)
+
+    if indexes is None or len(indexes) == 0:
+        return None
+
     nums = extract_numbers("get_vals_at_range()\t", input_string)
     if nums is None or len(nums) == 0:
         return None
 
-    indexes = extract_tuples("get_vals_at_range()\t", input_string)
 
-    if indexes is None or len(indexes) == 0:
-        return None
 
     if len(indexes) > 1:
         print("get_vals_at_range()\tPlease input only ONE range.")
 
     if len(indexes[0]) != 2:
-        print(print("get_vals_at_range()\tThe range must contain TWO numbers."))
+        print("get_vals_at_range()\tThe range must contain TWO numbers.")
         return None
 
     if indexes[0][0] not in range(len(nums)) or indexes[0][1] not in range(len(nums)):
+        print("get_vals_at_range()\tIndexes out of range.")
+        return None
+
+    indexes[0] = [int(min(indexes[0])), int(max(indexes[0]))]
+    print(input_string)
+
+    if indexes[0][0] != indexes[0][1]:
+        return nums[indexes[0][0]:indexes[0][1]]
+    else:
+        return nums[indexes[0][0]]
 
 # endregion
+
 
 # region Task 12
 def get_unique_numbers(input_string=None):
@@ -510,7 +527,7 @@ functions = {
 
 # region __main__
 if __name__ == "__main__":
-    extract_tuples("extract_tuples():\t", "1 2 3 4 (4 4) (6.54, 4.3)")
+    print(get_vals_at_range("1 2 3 4 (1 1)"))
     while True:
         user_input = input("\nPlease enter task number to run or 'q' to exit:\n")
         if user_input.lower().strip() == "q":
