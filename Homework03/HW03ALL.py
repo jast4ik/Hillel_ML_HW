@@ -141,7 +141,7 @@ def extract_tuples(prefix, input_string=None):
                 current_t[e_index] = float(num)
 
             except (TypeError, ValueError):
-                return None, input_string
+                return None
 
         tuples[t_index] = current_t
 
@@ -337,6 +337,37 @@ def get_cel_fahr_cor_table(input_string=None):
 # endregion
 
 
+# region Task 07
+def get_polygon_perimeter(input_string=None):
+    """The function returns polygon perimeter."""
+
+    if not is_string("get_polygon_perimeter():", input_string):
+        return None
+
+    vertexes, input_string = extract_tuples("get_polygon_perimeter():\t", input_string.strip())
+
+    if vertexes is None:
+        return None
+
+    if len(vertexes) < 2:
+        print("get_polygon_perimeter():\tThere should be minimum TWO vertexes.")
+
+    perimeter = 0.0
+
+    for index, vertex in enumerate(vertexes[0:-1:1]):
+        perimeter += math.sqrt(
+            (vertexes[index + 1][0] - vertex[0]) ** 2
+            + (vertexes[index + 1][1] - vertex[1]) ** 2
+        )
+
+    perimeter += math.sqrt(
+        (vertexes[0][0] - vertexes[-1][0]) ** 2
+        + (vertexes[0][1] - vertexes[-1][1]) ** 2
+    )
+    return round(perimeter, 3)
+# endregion
+
+
 # region Task 08
 def get_ratio(input_string):
     """The function determines the ratio of each number in the list to its arithmetic mean."""
@@ -528,6 +559,7 @@ functions = {
 
 # region __main__
 if __name__ == "__main__":
+    print(get_polygon_perimeter("(-5 1) (2 4) (3 9) (4 16) (5 25)"))
     while True:
         user_input = input("\nPlease enter task number to run or 'q' to exit:\n")
         if user_input.lower().strip() == "q":
