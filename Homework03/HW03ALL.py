@@ -139,9 +139,7 @@ def extract_tuples(prefix, input_string=None):
 
         tuples[t_index] = current_t
 
-    print(tuples)
-
-    return None
+    return tuples
 
 
 def get_task_to_run(input_string=None):
@@ -265,6 +263,7 @@ def get_n_fibonacci_sequence(input_string=None, at_index=False):
 
 
 # endregion
+
 
 # region Task 05
 def get_fibonacci_sequence_to_n(input_string=None):
@@ -402,6 +401,33 @@ def reverse_list(input_string=None):
 
 # endregion
 
+
+# region Task 11
+def get_vals_at_range(input_string=None):
+    """The function returns sequence from specified range"""
+
+    if not is_string("get_vals_at_range():", input_string):
+        return None
+
+    nums = extract_numbers("get_vals_at_range()\t", input_string)
+    if nums is None or len(nums) == 0:
+        return None
+
+    indexes = extract_tuples("get_vals_at_range()\t", input_string)
+
+    if indexes is None or len(indexes) == 0:
+        return None
+
+    if len(indexes) > 1:
+        print("get_vals_at_range()\tPlease input only ONE range.")
+
+    if len(indexes[0]) != 2:
+        print(print("get_vals_at_range()\tThe range must contain TWO numbers."))
+        return None
+
+    if indexes[0][0] not in range(len(nums)) or indexes[0][1] not in range(len(nums)):
+
+# endregion
 
 # region Task 12
 def get_unique_numbers(input_string=None):
