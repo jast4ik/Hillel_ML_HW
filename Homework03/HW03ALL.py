@@ -29,7 +29,7 @@
             - check if there is an employee named <name> in the system (find);
             - list all employees (list);
             - remove employee named <name> from the system (delete);
-            - shit down the system (stop).
+            - shut down the system (stop).
 #15.    Task from www.codewars.com
         https://www.codewars.com/kata/5263a84ffcadb968b6000513
 
@@ -37,6 +37,7 @@
 
 import math
 import numpy as np
+import re
 
 # region Input and result strings definition
 prompt_strings = {
@@ -454,6 +455,12 @@ functions = {
 # region __main__
 if __name__ == "__main__":
     while True:
+        a = re.findall(r'\((.*?)\)', "1 2 3 4 (5.23, -8) (+0 -2.456)")
+        for idx, i in enumerate(a):
+            print(type(i))
+            i = re.findall(r"[-+]?\d*\.?\d+|\d+", i)
+            a[idx] = i
+        print(a)
         user_input = input("\nPlease enter task number to run or 'q' to exit:\n")
         if user_input.lower().strip() == "q":
             break
