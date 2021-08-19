@@ -230,7 +230,20 @@ class Homework03Test(ut.TestCase):
         print("Correct input...")
         self.assertEqual(hw03.get_numbers_in_two_sequences(["1 2 3 1 5", "2 8 -11 5"]), [2, 5])
 
+    def test_product_matrices(self):
+        """Testing product_matrices() function"""
 
+        print("Incorrect input...")
+        self.assertEqual(hw03.product_matrices(["(1 2 3) (3 4)", "(1) (2 3)"]), None)
+        self.assertEqual(hw03.product_matrices(["(1 2 3) (3 4)"]), None)
+        self.assertEqual(hw03.product_matrices(["(1 2 3) (3 4 5)", "(1 3) (2 3)"]), None)
+
+        print("Correct input...")
+        self.assertEqual(hw03.product_matrices(["(1 2) (3 4)", "(5 6) (7 8)"]),
+                         [[19, 22], [43, 50]])
+
+        self.assertEqual(hw03.product_matrices(["(1 2 3) (4 5 6) (7 8 9)", "(10 11 12) (13 14 15) (16 17 18)"]),
+                         [[84, 90, 96], [201, 216, 231], [318, 342, 366]])
 
 
 # region main

@@ -131,24 +131,25 @@ def extract_tuples(prefix, input_string=None):
         print(str(prefix) + "There is no tuples.")
         return None, input_string
 
-    input_wo_tuples = str()
+    input_wo_tuples = str(input_string)
 
     for t_index, current_t in enumerate(tuples):
-        input_wo_tuples = input_string.replace("({})".format(current_t), "")
-        current_t = re.findall(r"[-+]?\d*\.?\d+|\d+", current_t)
+        processed_t = re.findall(r"[-+]?\d*\.?\d+|\d+", current_t)
 
-        if current_t is None:
+        if processed_t is None:
             print(str(prefix) + "\tCan't extract tuple from {}.".format(str(current_t)))
             return None, input_string
 
-        for e_index, num in enumerate(current_t):
+        input_wo_tuples = str.replace(input_wo_tuples, "(" + str(current_t) + ")", "")
+
+        for e_index, num in enumerate(processed_t):
             try:
-                current_t[e_index] = float(num)
+                processed_t[e_index] = float(num)
 
             except (TypeError, ValueError):
                 return None, input_string
 
-        tuples[t_index] = current_t
+        tuples[t_index] = processed_t
 
     return tuples, input_wo_tuples
 
@@ -378,6 +379,8 @@ def get_polygon_perimeter(input_string=None):
     )
 
     return round(perimeter, 3)
+
+
 # endregion
 
 
@@ -552,6 +555,60 @@ def get_numbers_in_two_sequences(num_sequences=None):
 # endregion
 
 
+# region Task 14
+def product_matrices(input_strings):
+    if type(input_strings) is not list:
+        print("product_matrices():\t Input should be list of strings.")
+        return None
+
+    if len(input_strings) != 2:
+        print("product_matrices():\t There should be TWO strings.")
+        return None
+
+    if not is_string("product_matrices():\t", input_strings[0]) \
+            or not is_string("product_matrices():\t", input_strings[1]):
+        return None
+
+    m_a = extract_tuples("product_matrices():\t", input_strings[0])[0]  # Matrix A
+    m_b = extract_tuples("product_matrices():\t", input_strings[1])[0]  # Matrix B
+
+    if m_a is None or m_b is None:
+        return None
+
+    for index, col in enumerate(m_a[:-1:]):
+        if len(col) != len(m_a[index + 1]):
+            print("product_matrices():\t Length of all rows should be the same.")
+            return None
+
+    for index, col in enumerate(m_b[:-1:]):
+        if len(col) != len(m_b[index + 1]):
+            print("product_matrices():\t Length of all rows should be the same.")
+            return None
+
+    m_a_w = len(m_a[0])  # Matrix A width
+    m_a_h = len(m_a)  # Matrix A height
+    m_b_w = len(m_b[0])  # Matrix B width
+    m_b_h = len(m_b)  # Matrix B height
+
+    if m_a_w != m_a_h or m_b_h != m_b_w or m_a_w != m_b_w or m_a_h != m_b_h:
+        print("product_matrices():\t Matrices should have the same size and be square.")
+        return None
+
+    m_c = [[] for i in range(m_b_w)]  # Matrix C (The result)
+
+    for i in range(m_a_h):
+        for j in range(m_b_w):
+            c_ij = 0
+            for k in range(m_a_w):
+                c_ij += m_a[i][k] * m_b[k][j]
+            m_c[i].append(c_ij)
+
+    return m_c
+
+
+# endregion
+
+
 # region Functions dictionary definition
 functions = {
     1: get_square_root,
@@ -575,6 +632,8 @@ functions = {
 if __name__ == "__main__":
     same_input_scheme = (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12)
     same_output_scheme = (1, 2, 3, 4, 5, 7, 9, 10, 11, 12, 13)
+
+    product_matrices(["(1 2 3) (4 5 6) (7 8 9)", "(10 11 12) (13 14 15) (16 17 18)"])
 
     while True:
         user_input = input("\nPlease enter task number to run or 'q' to exit:\n")
@@ -614,7 +673,23 @@ if __name__ == "__main__":
                         sequences.append(user_input)
 
                     result = get_numbers_in_two_sequences(sequences)
-            except (Exception, ):
+                elif task_to_run == 14:
+                    sequences = list()
+
+                    user_input = input("Enter first matrix in the format (...) (...):\n")
+                    if user_input.lower().strip() == "q":
+                        break
+                    else:
+                        sequences.append(user_input)
+
+                    user_input = input("Enter second matrix in the format (...) (...):\n")
+                    if user_input.lower().strip() == "q":
+                        break
+                    else:
+                        sequences.append(user_input)
+
+                    result = product_matrices(sequences)
+            except (Exception,):
                 print("Main:\tCan't get user input on task {}.".format(str(task_to_run)))
                 continue
 
@@ -645,5 +720,14 @@ if __name__ == "__main__":
                 print(result_strings[task_to_run].format(str(result)))
                 for element in result:
                     print("{}\tis {}\t{}.".format(element[0], element[1], element[2]))
+            elif task_to_run == 14:
+                print("Product of matrices is:")
+                col_str = str("| ")
 
+                for col in result:
+                    col_str = "| "
+                    for val in col:
+                        col_str += str(" {}".format(str(val)))
+                    col_str += " |"
+                    print(col_str)
 # endregion
