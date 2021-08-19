@@ -123,32 +123,38 @@ def extract_tuples(prefix, input_string=None):
 
     if not is_string(prefix, input_string):
         print(str(prefix) + "\tThe input variable must be a string.")
-        return None
+        return None, input_string
 
     tuples = re.findall(r'\((.*?)\)', input_string)
 
     if tuples is None or len(tuples) == 0:
         print(str(prefix) + "There is no tuples.")
-        return None
+        return None, input_string
+
+    input_wo_tuples = str()
 
     for t_index, current_t in enumerate(tuples):
-        input_string = input_string.replace("({})".format(current_t), "")
+        input_wo_tuples = input_string.replace("({})".format(current_t), "")
         current_t = re.findall(r"[-+]?\d*\.?\d+|\d+", current_t)
 
+        if len(current_t) != 2:
+            print(str(prefix) + "\tThere should be TWO values in ({}).".format(str(current_t)))
+            continue
+
         if current_t is None:
-            print("extract_tuples()\tCan't extract tuple from {}.".format(str(current_t)))
-            return None
+            print(str(prefix) + "\tCan't extract tuple from {}.".format(str(current_t)))
+            return None, input_string
 
         for e_index, num in enumerate(current_t):
             try:
                 current_t[e_index] = float(num)
 
             except (TypeError, ValueError):
-                return None
+                return None, input_string
 
         tuples[t_index] = current_t
 
-    return tuples, input_string
+    return tuples, input_wo_tuples
 
 
 def get_task_to_run(input_string=None):
@@ -347,9 +353,10 @@ def get_polygon_perimeter(input_string=None):
     if not is_string("get_polygon_perimeter():", input_string):
         return None
 
-    vertexes, input_string = extract_tuples("get_polygon_perimeter():\t", input_string.strip())
+    vertexes, temp = extract_tuples("get_polygon_perimeter():\t", input_string.strip())
 
     if vertexes is None:
+        print("get_polygon_perimeter():\tThere is no vertexes in the input.")
         return None
 
     if len(vertexes) < 2:
@@ -565,7 +572,9 @@ functions = {
 
 # region __main__
 if __name__ == "__main__":
-    print(get_polygon_perimeter("(-5 1) (2 4) (3 9) (4 16) (5 25)"))
+    same_input_scheme = (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12)
+    same_output_scheme = (1, 2, 3, 4, 5, 7, 9, 10, 11, 12, 13)
+
     while True:
         user_input = input("\nPlease enter task number to run or 'q' to exit:\n")
         if user_input.lower().strip() == "q":
@@ -575,12 +584,16 @@ if __name__ == "__main__":
               + "('q' to return to the task selection).\n")
 
         task_to_run = get_task_to_run(user_input)
+
         if task_to_run is None:
             continue
 
         while True:
             result = None
-            same_input_scheme = (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12)
+
+            if task_to_run is None:
+                continue
+
             try:
                 if task_to_run in same_input_scheme:
                     user_input = input(prompt_strings[task_to_run] + " ('q' to return to the task selection):\n")
@@ -600,9 +613,9 @@ if __name__ == "__main__":
                         sequences.append(user_input)
 
                     result = get_numbers_in_two_sequences(sequences)
-            except (Exception,):
-                print("Main:\tCan't run specified task.")
-                break
+            except (Exception, ):
+                print("Main:\tCan't get user input on task {}.".format(str(task_to_run)))
+                continue
 
             if user_input.lower().strip() == "q":
                 break
@@ -610,14 +623,13 @@ if __name__ == "__main__":
             try:
                 if task_to_run in same_input_scheme:
                     result = functions[task_to_run](user_input)
+
+                if result is None:
+                    continue
+
             except (Exception,):
-                print("Main:\tCan't run specified task.")
+                print("Main:\tError while run {}.".format(str(functions[task_to_run])))
                 continue
-
-            if result is None:
-                continue
-
-            same_output_scheme = (1, 2, 3, 4, 5, 7, 9, 10, 11, 12, 13)
 
             if task_to_run in same_output_scheme:
                 print(result_strings[task_to_run].format(str(result)))
