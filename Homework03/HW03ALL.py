@@ -39,6 +39,16 @@ import math
 import numpy as np
 import re
 
+
+__author__ = "Yevgen Iliashchienko"
+__copyright__ = "Copyright 2021, Yevgen Iliashchienko"
+__license__ = "GNU GPL"
+__version = "1.0.0"
+__maintainer__ = "Yevgen Iliashchienko"
+__email__ = "yevgen.iliashchienko@gmail.com"
+__status__ = "Development"
+
+
 # region Input and result strings definition
 prompt_strings = {
     1: "\nEnter a number to calculate the square root.",
@@ -633,7 +643,7 @@ if __name__ == "__main__":
     same_input_scheme = (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12)
     same_output_scheme = (1, 2, 3, 4, 5, 7, 9, 10, 11, 12, 13)
 
-    product_matrices(["(1 2 3) (4 5 6) (7 8 9)", "(10 11 12) (13 14 15) (16 17 18)"])
+    #product_matrices(["(1 2 3) (4 5 6) (7 8 9)", "(10 11 12) (13 14 15) (16 17 18)"])
 
     while True:
         user_input = input("\nPlease enter task number to run or 'q' to exit:\n")
