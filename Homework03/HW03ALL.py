@@ -42,13 +42,13 @@ import re
 # region Input and result strings definition
 prompt_strings = {
     1: "\nEnter a number to calculate the square root.",
-    2: "\nEnter a sequence of numbers.",
+    2: "\nEnter a sequence of numbers to find the maximum among them.",
     3: "\nEnter the symbol of the mathematical operation and the sequence of numbers to which it should be applied.",
     4: "\nEnter the number of the number in the Fibanacci sequence.",
-    5: "\nEnter the number.",
-    6: "\nEnter the start and end of the range, step.",
+    5: "\nEnter the number to determine the Fibanacci sequence up to this number.",
+    6: "\nEnter the start and end of the range, step. To calculate a correspondence table C -> F.",
     7: "\nEnter the sequence of vertices of the polygon in the format (A B).",
-    8: "\nEnter a sequence of numbers.",
+    8: "\nEnter a sequence of numbers to calculate ratio.",
     9: "\nEnter a sequence of numbers.",
     10: "\nEnter a sequence of numbers.",
     11: "\nEnter a sequence of numbers and the range in the format (A B).",
@@ -136,10 +136,6 @@ def extract_tuples(prefix, input_string=None):
     for t_index, current_t in enumerate(tuples):
         input_wo_tuples = input_string.replace("({})".format(current_t), "")
         current_t = re.findall(r"[-+]?\d*\.?\d+|\d+", current_t)
-
-        if len(current_t) != 2:
-            print(str(prefix) + "\tThere should be TWO values in ({}).".format(str(current_t)))
-            continue
 
         if current_t is None:
             print(str(prefix) + "\tCan't extract tuple from {}.".format(str(current_t)))
@@ -359,9 +355,14 @@ def get_polygon_perimeter(input_string=None):
         print("get_polygon_perimeter():\tThere is no vertexes in the input.")
         return None
 
-    if len(vertexes) < 2:
-        print("get_polygon_perimeter():\tThere should be minimum TWO vertexes.")
+    if len(vertexes) < 3:
+        print("get_polygon_perimeter():\tThere should be minimum THREE vertexes.")
         return None
+
+    for vertex in vertexes:
+        if len(vertex) != 2:
+            print("get_polygon_perimeter():\t{}\tThere should be TWO numbers in vertex.".format(str(vertex)))
+            return None
 
     perimeter = 0.0
 
@@ -629,6 +630,9 @@ if __name__ == "__main__":
 
             except (Exception,):
                 print("Main:\tError while run {}.".format(str(functions[task_to_run])))
+                continue
+
+            if result is None:
                 continue
 
             if task_to_run in same_output_scheme:

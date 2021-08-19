@@ -50,6 +50,16 @@ class Homework03Test(ut.TestCase):
         self.assertEqual(hw03.extract_numbers("\t\t", "1.5 2.5 -4.55"), [1.5, 2.5, -4.55])
         print("\t\t\t" + str(hw03.extract_numbers("", "1.5 2.5 -4.55")))
 
+    def test_extract_tuples(self):
+        """Testing extract_tuples() function"""
+
+        print("\t\tCorrect sequence of numbers (1.23 3.33) (3 4) (5 6) (7 6.23 5)...")
+        self.assertEqual(hw03.extract_tuples("\t\t", "(1.23 3.33) (3 4) (5 6) (7 6.23 5)")[0],
+                         [[1.23, 3.33], [3, 4], [5, 6], [7, 6.23, 5]])
+
+        print("\t\tIncorrect sequence of numbers 1 2 3 4 rrr...")
+        self.assertEqual(hw03.extract_tuples("\t\t", "1 2 3 4 rrr")[0], None)
+
     def test_get_square_root(self):
         """Testing get_square_root() function"""
         print("\t\tEmpty string...")
@@ -166,6 +176,61 @@ class Homework03Test(ut.TestCase):
         self.assertEqual(hw03.get_cel_fahr_cor_table("1.23 -1.23 1"),
                          [(-1.23, 29.79), (-0.23, 31.59), (0.77, 33.39), (1.23, 34.21)])
         print(str(hw03.get_cel_fahr_cor_table("1.23 -1.23 1")))
+
+    def test_get_polygon_perimeter(self):
+        """Testing get_polygon_perimeter() function"""
+
+        print("Incorrect input...")
+        self.assertEqual(hw03.get_polygon_perimeter("fg dfg gf gfd fgd "), None)
+        self.assertEqual(hw03.get_polygon_perimeter("(1 2)"), None)
+        self.assertEqual(hw03.get_polygon_perimeter("(1 2) (1) ( 1 2 3)"), None)
+        self.assertEqual(hw03.get_polygon_perimeter("(1 2) ( -6 5)"), None)
+
+        print("Correct input...")
+        self.assertEqual(hw03.get_polygon_perimeter("(1 2) (-6 9) (12.3 6.8)"), 40.608)
+
+    def test_get_ratio(self):
+        """Testing get_ratio() function"""
+
+        print("Correct input...")
+        self.assertEqual(hw03.get_ratio("1 2 3"), [(2, "equal to", 2), (3, "greater than", 2), (1, "less than", 2)])
+
+    def test_greater_than_neighbors(self):
+        """Testing greater_than_neighbors() function"""
+
+        print("Correct input...")
+        self.assertEqual(hw03.greater_than_neighbors("1 2 3 1 1 1 6 5"), [3, 6])
+
+    def test_reverse_list(self):
+        """Testing reverse_list() function"""
+
+        print("Correct input...")
+        self.assertEqual(hw03.reverse_list("1 2 3 1 1 1 6 5"), [5, 6, 1, 1, 1, 3, 2, 1])
+
+    def test_get_vals_at_range(self):
+        """Testing get_vals_at_range() function"""
+
+        print("Incorrect input...")
+        self.assertEqual(hw03.get_vals_at_range("1 2 3 1 1 1 6 5 (-10 3)"), None)
+        self.assertEqual(hw03.get_vals_at_range("1 2 3 1 1 1 6 5 "), None)
+
+        print("Correct input...")
+        self.assertEqual(hw03.get_vals_at_range("1 2 3 1 1 1 6 5 (1 5)"), [2, 3, 1, 1])
+        self.assertEqual(hw03.get_vals_at_range("1 2 3 1 1 1 6 5 (5 1)"), [2, 3, 1, 1])
+
+    def test_get_unique_numbers(self):
+        """Testing get_unique_numbers() function"""
+
+        print("Correct input...")
+        self.assertEqual(hw03.get_unique_numbers("1 2 3 1 1 1 6 5"), [2, 3, 5, 6])
+
+    def test_get_numbers_in_two_sequences(self):
+        """Testing get_numbers_in_two_sequences() function"""
+
+        print("Correct input...")
+        self.assertEqual(hw03.get_numbers_in_two_sequences(["1 2 3 1 5", "2 8 -11 5"]), [2, 5])
+
+
 
 
 # region main
