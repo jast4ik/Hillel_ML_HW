@@ -15,7 +15,7 @@ __status__ = "Development"
 
 
 # region Task01
-def get_col_sum(dimension: tuple, value: float):
+def get_col_sum(dimension: tuple, value: float, benchmark_mode=True):
 
     if dimension[0] > 10000 or dimension[1] > 10000:
         print("There is no memory check, so size of array is limited to 10000.")
@@ -56,31 +56,38 @@ def get_col_sum(dimension: tuple, value: float):
 
     print("\nCalculating sum of NumPy with numpy.sum()...")
     start_time = time.time()
-    sums = np.sum(numpy_array, axis=0)
+    col_sums = np.sum(numpy_array, axis=0)
     numpy_time = time.time() - start_time
     print("Time to proceed: {:.10f}s.".format(numpy_time))
-    numpy_array = None
+
     af.print_time_relation("\nNumPy array creation ", numpy_creation_time, python_creation_time)
     af.print_time_relation("NumPy np.sum() ", numpy_time, python_time)
 
     print("\nCleaning up memory...")
     del numpy_array
     del python_list
+
+    if benchmark_mode:
+        del col_sums
+
     gc.collect()
 
-    return sums
+    if benchmark_mode:
+        return None
+    else:
+        return col_sums
 
 # endregion
 
 
 if __name__ == "__main__":
 
-    print("Task 01...")
+    print("=======================Task 01=======================")
     print("\n----------10x10 matrix----------")
     get_col_sum((10, 10), 2)
     print("\n----------100x100 matrix----------")
-    get_col_sum((100, 100), 2)
+    print(get_col_sum((100, 100), 2, False))
     print("\n----------1000x1000 matrix----------")
     get_col_sum((1000, 1000), 2)
-    print("\n----------10000x10000 matrix----------")
-    get_col_sum((10000, 10000), 2)
+    print("\n----------5000x5000 matrix----------")
+    get_col_sum((5000, 5000), 2)
