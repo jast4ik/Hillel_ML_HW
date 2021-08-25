@@ -2,6 +2,7 @@
 
 
 import re
+import random
 
 
 __author__ = "Yevgen Iliashchienko"
@@ -117,7 +118,7 @@ def get_task_to_run(input_string: str, input_range: tuple):
     return int(number)
 
 
-def create_list(dimension: tuple, value: float):
+def create_list(dimension: tuple, value: float, random_value=False):
     if len(dimension) > 2 or len(dimension) <= 0:
         print("Dimension should be 1 or 2.")
         return None
@@ -132,10 +133,13 @@ def create_list(dimension: tuple, value: float):
 
     python_list = []
 
-    for row_index in range(dimension[1]):
+    for row_index in range(dimension[0]):
         python_list.append([])
-        for col_index in range(dimension[0]):
-            python_list[row_index].append(value)
+        for col_index in range(dimension[1]):
+            if random_value:
+                python_list[row_index].append(random.uniform(-100.0, 100.0))
+            else:
+                python_list[row_index].append(value)
 
     return python_list
 
@@ -152,6 +156,16 @@ def print_time_relation(prefix: str, time_1: float, time_2: float):
         time_relation = time_2 / time_1
 
     print(result_string.format(time_relation))
+
+
+def print_list(in_list: list):
+
+    for row in in_list:
+        row_str = "| "
+        for col in row:
+            row_str += "\t{:.2f} ".format(col).ljust(8)
+        row_str += " |"
+        print(row_str)
 
 
 if __name__ == "__main__":
