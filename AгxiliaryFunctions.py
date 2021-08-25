@@ -117,6 +117,29 @@ def get_task_to_run(input_string: str, input_range: tuple):
     return int(number)
 
 
+def create_list(dimension: tuple, value: float):
+    if len(dimension) > 2 or len(dimension) <= 0:
+        print("Dimension should be 1 or 2.")
+        return None
+
+    if dimension[0] <= 0 or dimension[1] <= 0:
+        print("Matrix size should be greater than 0.")
+        return None
+
+    if dimension[0] > 5000 or dimension[1] > 5000:
+        print("There is no memory check, so size of array is limited to 5000 x 5000.")
+        return None
+
+    python_list = []
+
+    for row_index in range(dimension[1]):
+        python_list.append([])
+        for col_index in range(dimension[0]):
+            python_list[row_index].append(value)
+
+    return python_list
+
+
 def print_time_relation(prefix: str, time_1: float, time_2: float):
     time_relation = 1.0
     result_string = prefix + " is {:.2f} times "

@@ -17,19 +17,9 @@ __status__ = "Development"
 # region Task01
 def get_col_sum(dimension: tuple, value: float, benchmark_mode=True):
 
-    if dimension[0] > 10000 or dimension[1] > 10000:
-        print("There is no memory check, so size of array is limited to 10000.")
-        return None
-
-    python_list = []
-
     print("Creating Python list...")
     start_time = time.time()
-    for row_index in range(dimension[1]):
-        python_list.append([])
-        for col_index in range(dimension[0]):
-            python_list[row_index].append(value)
-
+    python_list = af.create_list(dimension, value)
     python_creation_time = time.time() - start_time
     print("Time to proceed: {:.10f}s.".format(python_creation_time))
 
