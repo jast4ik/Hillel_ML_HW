@@ -289,3 +289,26 @@ if __name__ == "__main__":
     print("\n----------1000000 elements----------")
     test_list = np.random.rand(1, 1000000).tolist()
     get_unique_numbers_count(test_list[0])
+
+    print("\n=======================Task 06=======================")
+    print("Enter 'q' to stop.")
+    entered_numbers = list()
+    while True:
+        user_input = input("Enter a number: ")
+        user_input = user_input.strip().lower()
+
+        if user_input == 'q':
+            break
+
+        entered_number = None
+        try:
+            entered_number = round(float(user_input), 2)
+        except (Exception, ):
+            continue
+
+        if entered_number not in entered_numbers:
+            entered_numbers.append(entered_number)
+        else:
+            print("{} was entered before.".format(entered_number))
+
+
