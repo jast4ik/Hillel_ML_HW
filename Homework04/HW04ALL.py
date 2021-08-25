@@ -242,8 +242,14 @@ def get_unique_numbers_count(input_list: list, benchmark_mode=True):
 # endregion
 
 
-if __name__ == "__main__":
+# region Task 08
+def process_dict(input_dict: dict):
+    pass
+# endregion
 
+
+if __name__ == "__main__":
+    # region 01 run
     print("=======================Task 01=======================")
     print("\n----------10x10 matrix----------")
     print(get_col_sum((10, 10), 2, False))
@@ -251,7 +257,9 @@ if __name__ == "__main__":
     get_col_sum((100, 100), 2)
     print("\n----------1000x1000 matrix----------")
     get_col_sum((1000, 1000), 2)
+    # endregion
 
+    # region 02 run
     print("\n=======================Task 02=======================")
     print("\n----------10x10 matrix----------")
     print(get_identity_matrix(10, False))
@@ -259,7 +267,9 @@ if __name__ == "__main__":
     get_identity_matrix(100)
     print("\n----------1000x1000 matrix----------")
     get_identity_matrix(1000)
+    # endregion
 
+    # region 03 run
     print("\n=======================Task 03=======================")
     print("\n----------2x3 matrix----------")
     get_transposed_matrix((2, 3), False)
@@ -267,10 +277,14 @@ if __name__ == "__main__":
     get_transposed_matrix((20, 30))
     print("\n----------200x300 matrix----------")
     get_transposed_matrix((200, 300))
+    # endregion
 
+    # region 04 run
     print("\n=======================Task 04=======================")
     calculate_word_instances("asd asd fgh jkll rew rew asdfg")
+    # endregion
 
+    # region 05 run
     print("\n=======================Task 05=======================")
     print("\n----------10 elements----------")
     get_unique_numbers_count([1, 2, 55, 6, 77, 3, 3, 2, 5, 6], False)
@@ -289,7 +303,9 @@ if __name__ == "__main__":
     print("\n----------1000000 elements----------")
     test_list = np.random.rand(1, 1000000).tolist()
     get_unique_numbers_count(test_list[0])
+    # endregion
 
+    # region 06 run
     print("\n=======================Task 06=======================")
     print("Enter 'q' to stop.")
     entered_numbers = list()
@@ -310,5 +326,55 @@ if __name__ == "__main__":
             entered_numbers.append(entered_number)
         else:
             print("{} was entered before.".format(entered_number))
+    # endregion
 
+    # region 07 run
+    print("\n=======================Task 07=======================")
+    print("Enter 'q' to stop.")
+    commands = ["insert", "delete", "get"]
+
+    database = dict()
+
+    while True:
+        user_input = input("Enter a command:")
+
+        if user_input.strip().lower() == 'q':
+            break
+
+        for command in commands:
+            if command in user_input.strip().lower():
+                processed_input = user_input.strip().replace(command, "")
+                processed_input = processed_input.split()
+                name = str()
+
+                if command == "insert":
+                    for word_index, word in enumerate(processed_input):
+                        if not word.isdigit():
+                            name = word
+                            processed_input.pop(word_index)
+                            break
+                    if name not in database:
+                        database[name] = processed_input[0]
+                    break
+                elif command == "delete":
+                    if processed_input[0] in database:
+                        del database[processed_input[0]]
+                    else:
+                        print("There is no name {} in database.".format(processed_input[0]))
+
+                    break
+                elif command == "get":
+                    if processed_input[0] in database:
+                        print(database[processed_input[0]])
+                    else:
+                        print("There is no name {} in database.".format(processed_input[0]))
+
+                    break
+
+        print(database)
+    # endregion
+
+    # region 08 run
+
+    # endregion
 
