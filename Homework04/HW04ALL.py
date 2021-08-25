@@ -244,7 +244,53 @@ def get_unique_numbers_count(input_list: list, benchmark_mode=True):
 
 # region Task 08
 def process_dict(input_dict: dict):
-    pass
+    """The function makes some very weird things..."""
+
+    print("input = {")
+    for key in input_dict:
+        temp_str = "{}:".format(key)
+        for value in input_dict[key]:
+            temp_str += " {} ".format(value)
+        print(temp_str)
+    print("}\n")
+
+    sorted_dict = dict()
+    # Sorting key in min->max order
+    sorted_keys = sorted(input_dict, key=lambda x: int(x))
+
+    # Removing duplicate values from each list in dictionary. First appearance is kept.
+    for key in sorted_keys:
+        for c_value in input_dict[key]:
+            # get indexes of not unique list elements
+            e_indexes = [i for i in range(len(input_dict[key])) if input_dict[key][i] == c_value]
+
+            if len(e_indexes) > 1:
+                # removing elements in reverse order to prevent "out of range" error.
+                for index in sorted(e_indexes)[-1:0:-1]:
+                    del input_dict[key][index]
+
+            # creating dictionary sorted by key. Without duplicates in value list.
+            sorted_dict[key] = input_dict[key]
+
+    # s_index - straight index from last to second
+    for s_index in range(len(sorted_keys) - 1, 0, -1):
+        s_index -= len(sorted_keys)
+        # r_index - reverse index from 0 to m_index - 1
+        for s_value in sorted_dict[sorted_keys[s_index]]:
+            for r_index in range(0, s_index + len(sorted_keys)):
+                for index, r_value in enumerate(sorted_dict[sorted_keys[r_index]]):
+                    if s_value == r_value:
+                        del sorted_dict[sorted_keys[r_index]][index]
+
+    print("output = {")
+    for key in sorted_dict:
+        temp_str = "{}:".format(key)
+        for value in sorted_dict[key]:
+            temp_str += " {} ".format(value)
+        print(temp_str)
+    print("}\n")
+
+    return sorted_dict
 # endregion
 
 
@@ -373,8 +419,16 @@ if __name__ == "__main__":
 
         print(database)
     # endregion
-
     # region 08 run
+    print("\n=======================Task 08=======================")
+    in_dict = {
+        "432": ["A", "A", "B", "D", "A"],
+        "53": ["L", "G", "B", "C"],
+        "236": ["L", "A", "X", "G", "X", "H", "X"],
+        "11": ["P", "R", "S", "D"]
+    }
 
+    process_dict(in_dict)
     # endregion
+
 
