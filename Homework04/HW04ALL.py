@@ -4,7 +4,6 @@ import AгxiliaryFunctions as af
 import numpy as np
 import time
 import gc
-import random
 
 __author__ = "Yevgen Iliashchienko"
 __copyright__ = "Copyright 2021, Yevgen Iliashchienko"
@@ -143,7 +142,7 @@ def get_transposed_matrix(dimension: tuple, benchmark_mode=True):
     print("\nTransposing array using numpy.transpose()...")
     start_time = time.time()
 
-    numpy_array = np.random.rand(dimension[0], dimension[1])
+    numpy_array = np.array(python_array)
     numpy_transposed_array = np.transpose(numpy_array)
 
     numpy_time = time.time() - start_time
@@ -167,6 +166,7 @@ def get_transposed_matrix(dimension: tuple, benchmark_mode=True):
     if benchmark_mode:
         del numpy_transposed_array
 
+    print("\nCleaning up memory...")
     gc.collect()
 
     if benchmark_mode:
@@ -174,6 +174,70 @@ def get_transposed_matrix(dimension: tuple, benchmark_mode=True):
     else:
         return numpy_transposed_array
 
+
+# endregion
+
+
+# region Task 04
+def calculate_word_instances(input_string: str):
+    """The function calculates number of instances of each word in the given string."""
+
+    if not af.is_string("calculate_word_instances():", input_string):
+        return None
+
+    word_count = dict()
+
+    for word in input_string.strip().split():
+        if word not in word_count:
+            word_count[word] = 1
+        else:
+            word_count[word] += 1
+
+    print("The given string:\n{}\n".format(input_string))
+
+    for word in word_count:
+        if word_count[word] > 1:
+            print("{} has {} instances.".format(word, word_count[word]))
+        else:
+            print("{} has {} instance.".format(word, word_count[word]))
+
+
+# endregion
+
+
+# region Task 05
+def get_unique_numbers_count(input_list: list, benchmark_mode=True):
+    """The function returns number of unique values in list."""
+
+    print("\nCounting unique numbers using Python...")
+    start_time = time.time()
+
+    python_unique = set(input_list)
+
+    python_time = time.time() - start_time
+    print("Time to proceed: {:.10f}s.".format(python_time))
+
+    print("\nCounting unique numbers using Numpy...")
+    start_time = time.time()
+
+    numpy_unique = np.unique(input_list)
+
+    numpy_time = time.time() - start_time
+    print("Time to proceed: {:.10f}s.".format(numpy_time))
+
+    af.print_time_relation("\nNumPy", numpy_time, python_time)
+
+    if not benchmark_mode:
+        print("\nThe given list is:\n{}\nNumber of unique elements is {}:\n{}.".format(
+            input_list,
+            len(numpy_unique),
+            numpy_unique
+        ))
+
+    if benchmark_mode:
+        return None
+    else:
+        return numpy_unique
 
 # endregion
 
@@ -203,7 +267,25 @@ if __name__ == "__main__":
     get_transposed_matrix((20, 30))
     print("\n----------200x300 matrix----------")
     get_transposed_matrix((200, 300))
-    print("\n----------2000x3000 matrix----------")
-    get_transposed_matrix((2000, 3000))
-    print("\n----------5000x3000 matrix----------")
-    get_transposed_matrix((5000, 3000))
+
+    print("\n=======================Task 04=======================")
+    calculate_word_instances("asd asd fgh jkll rew rew asdfg")
+
+    print("\n=======================Task 05=======================")
+    print("\n----------10 elements----------")
+    get_unique_numbers_count([1, 2, 55, 6, 77, 3, 3, 2, 5, 6], False)
+    print("\n----------100 elements----------")
+    test_list = np.random.rand(1, 100).tolist()
+    get_unique_numbers_count(test_list[0])
+    print("\n----------1000 elements----------")
+    test_list = np.random.rand(1, 1000).tolist()
+    get_unique_numbers_count(test_list[0])
+    print("\n----------10000 elements----------")
+    test_list = np.random.rand(1, 10000).tolist()
+    get_unique_numbers_count(test_list[0])
+    print("\n----------100000 elements----------")
+    test_list = np.random.rand(1, 100000).tolist()
+    get_unique_numbers_count(test_list[0])
+    print("\n----------1000000 elements----------")
+    test_list = np.random.rand(1, 1000000).tolist()
+    get_unique_numbers_count(test_list[0])
