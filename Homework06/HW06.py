@@ -4,12 +4,17 @@ import pandas as pd
 import numpy as np
 from os.path import isfile
 import sys
-import matplotlib.pyplot as plt
-from xgboost import XGBRegressor
+#from sklearn.model_selection import GridSearchCV
+# import matplotlib.pyplot as plt
+from xgboost.sklearn import XGBRegressor
 import xgboost as xgb
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import r2_score
-import seaborn as sns
+# import seaborn as sns
+from sklearn.model_selection import KFold
+from sklearn.model_selection import GridSearchCV
+from sklearn.model_selection import RandomizedSearchCV
+import sklearn
 
 
 # region Functions to show memory used by pandas
@@ -69,48 +74,100 @@ if __name__ == "__main__":
         numeric_df.to_pickle(path="./data/num_df.pkl", compression='zip')
         print("num_df:\tdone")
 
-    xgb_model = XGBRegressor(
-        max_depth=6, n_estimators=100, n_jobs=8, booster='gbtree', random_state=42, learning_rate=0.05
-    )
+    #xgb_model = XGBRegressor(
+    #    max_depth=6,
+    #    n_estimators=100,
+    #    n_jobs=8,
+    #    booster='gbtree',
+    #    random_state=42,
+    #    learning_rate=0.05
+    #)
 
     X = numeric_df[['Year', 'Price']].astype(np.float64)
     y = numeric_df['Mileage'].astype(np.float64)
 
     make_cat = pd.DataFrame()
     model_cat = pd.DataFrame()
-    state_cat = pd.DataFrame()
-    city_cat = pd.DataFrame()
     make_cat['Make_cat'] = src_df['Make'].astype('category').cat.codes
-    #model_cat['Model_cat'] = src_df['Model'].astype('category').cat.codes
-    #state_cat['State_cat'] = src_df['State'].astype('category').cat.codes
-    #city_cat['City_cat'] = src_df['City'].astype('category').cat.codes
-    #make_cat = pd.get_dummies(src_df['Make'], prefix="model")
-    model_cat = pd.get_dummies(src_df['Model'], prefix="make")
+    model_cat['Model_cat'] = src_df['Model'].astype('category').cat.codes
 
     X = X.join(model_cat)
     X = X.join(make_cat)
-    #X = X.join(state_cat)
-    #X = X.join(city_cat)
-    #X['YP'] = X['Price'] * X['Make_cat'] * X['Model_cat']
-
-    #for key in X:
-    #    X[key] = (X[key] - X[key].mean()) / X[key].std()
-
-    #print(X.head)
-    #sns.heatmap(X.corr(), annot=True)
 
     del numeric_df
     del src_df
     gc.collect()
 
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+    #sns.pairplot(X.join(y), x_vars=['Model_cat', 'Make_cat', 'Year', 'Price'], y_vars='Mileage', height=7, aspect=0.7, kind='reg')
 
-    xgb_model.fit(X_train, y_train)
-    xgb_pred = xgb_model.predict(X_test)
+    #X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=2)
 
-    print(r2_score(y_test, xgb_pred))
+    #xgb_model.fit(X_train, y_train)
+    #xgb_pred = xgb_model.predict(X_test)
+
+    #print(r2_score(y_test, xgb_pred))
 
     #xgb.plot_importance(xgb_model)
-
     #plt.show()
 
+    #k_fold = KFold(n_splits=20, shuffle=True, random_state=42)
+    #k_fold.get_n_splits(X)
+
+    #xgb_best_model = XGBRegressor()
+    #xgb_best_score = 0.0
+
+    #for train_index, test_index in k_fold.split(X):
+    #    X_train = X.iloc[train_index][['Make_cat', 'Year', 'Price']]
+    #    X_test = X.iloc[test_index][['Make_cat', 'Year', 'Price']]
+    #    y_train = y.iloc[train_index]
+    #    y_test = y.iloc[test_index]
+
+    #    model = XGBRegressor(max_depth=6,
+    #                         n_estimators=100,
+    #                         n_jobs=8,
+    #                         booster='gbtree',
+    #                         random_state=42,
+    #                         learning_rate=0.05)
+    #    model.fit(X_train, y_train)
+    #    preds = model.predict(X_test)
+
+    #    r2 = r2_score(y_test, preds)
+    #    if r2 > xgb_best_score:
+    #        xgb_best_model = model
+    #        xgb_best_score = r2
+    #        print("Best r2: ", r2)
+
+    X_ = X.sample(frac=0.01, random_state=42)
+    y_ = y.sample(frac=0.01, random_state=42)
+
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=2)
+
+    #dmatrix = xgb.DMatrix(data=X, label=y)
+
+    params = {'max_depth': [10, 11, 12, 13, 14],
+              'learning_rate': [0.005, 0.0045, 0.004, 0.003, 0.0035, 0.002, 0.0025, 0.0055, 0.006],
+              'subsample': np.arange(0.5, 1.0, 0.1),
+              'colsample_bytree': np.arange(0.8, 1.0, 0.05),
+              'colsample_bylevel': np.arange(0.2, 0.6, 0.05),
+              'n_estimators': [800, 850, 900, 950, 1000, 1050, 1100, 1150, 1200],
+              }
+
+    #print(sorted(sklearn.metrics.SCORERS.keys()))
+
+    xgbr = xgb.XGBRegressor(seed=20, objective='reg:squarederror')
+
+    clf = RandomizedSearchCV(estimator=xgbr,
+                             param_distributions=params,
+                             scoring='r2',
+                             verbose=1,
+                             n_iter=200)
+
+    clf.fit(X_, y_)
+
+    preds = clf.predict(X_test)
+
+    r2 = r2_score(y_test, preds)
+
+    print("Best parameters:", clf.best_params_)
+    print("Best RMSE: ", clf.best_score_)
+    print("Best r2: ", r2)
