@@ -160,9 +160,9 @@ if __name__ == "__main__":
                              param_distributions=params,
                              scoring='r2',
                              verbose=1,
-                             n_iter=200)
+                             n_iter=20)
 
-    clf.fit(X_, y_)
+    clf.fit(X, y)
 
     preds = clf.predict(X_test)
 
