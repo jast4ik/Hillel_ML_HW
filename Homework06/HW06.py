@@ -84,7 +84,7 @@ if __name__ == "__main__":
     #)
 
     X = numeric_df[['Year', 'Price']].astype(np.float64)
-    y = numeric_df['Mileage'].astype(np.float64)
+    y = numeric_df['Price'].astype(np.float64)
 
     make_cat = pd.DataFrame()
     model_cat = pd.DataFrame()
