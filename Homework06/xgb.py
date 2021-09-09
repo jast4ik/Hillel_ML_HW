@@ -33,7 +33,7 @@ if __name__ == "__main__":
     X = X.join(model_cat)
     X = X.join(make_cat)
 
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.05, random_state=42)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.8, random_state=42)
 
     dmatrix_train = xgb.DMatrix(data=X_train, label=y_train)
     dmatrix_test = xgb.DMatrix(data=X_test, label=y_test)
@@ -59,8 +59,9 @@ if __name__ == "__main__":
         xgb_model = xgb.train(params=xgb_params,
                               dtrain=dmatrix_train,
                               evals=[(dmatrix_train, "train"), (dmatrix_test, "validation")],
-                              num_boost_round=10000,
-                              early_stopping_rounds=20)
+                              num_boost_round=50000
+                              #early_stopping_rounds=20)
+                              )
 
         # xgb_model.save_model("./data/models/xgb_model.model")
         pickle.dump(xgb_model, open("./data/models/xgb_model.model", "wb"))
