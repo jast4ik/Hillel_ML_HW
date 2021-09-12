@@ -46,33 +46,11 @@ if __name__ == "__main__":
     clear_df = pd.DataFrame()
     numeric_df = pd.DataFrame()
 
-    if isfile("./data/src_df.pkl"):
-        print("src_df:\tloading...")
-        src_df = pd.read_pickle(filepath_or_buffer="./data/src_df.pkl", compression='zip')
-        print("src_df:\tdone")
-    else:
-        print("src_df:\tprocessing...")
-        src_df = pd.read_csv('./data/true_car_listings_prepeared.csv')
-        src_df.drop(['Vin'], axis=1, inplace=True)
-        #src_df.drop(['City'], axis=1, inplace=True)
-        src_df.to_pickle(path="./data/src_df.pkl", compression='zip')
-        print("src_df:\tdone")
+
 
     max_year = src_df['Year'].max()
 
-    if isfile("./data/num_df.pkl"):
-        print("num_df:\tloading...")
-        numeric_df = pd.read_pickle(filepath_or_buffer="./data/num_df.pkl", compression='zip')
-        print("num_df:\tdone")
-    else:
-        print("num_df:\tprocessing...")
-        numeric_df = src_df.loc[
-            (src_df['Price'] != 0) &
-            (~src_df['Mileage'].isna()) &
-            (~src_df['Model'].isna())
-        ].select_dtypes(include=['int64', 'float64'])
-        numeric_df.to_pickle(path="./data/num_df.pkl", compression='zip')
-        print("num_df:\tdone")
+
 
     #xgb_model = XGBRegressor(
     #    max_depth=6,
