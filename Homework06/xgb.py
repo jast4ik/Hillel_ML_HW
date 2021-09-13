@@ -1,41 +1,53 @@
-import scipy.stats
-import xgboost as xgb
-import pickle
-from sklearn.metrics import r2_score
 import pandas as pd
+import xgboost as xgb
+from sklearn.metrics import r2_score
 import numpy as np
-from os.path import isfile
 from sklearn.model_selection import train_test_split
-from sklearn.linear_model import LinearRegression
 import DataSets as ds
 import matplotlib.pyplot as plt
+import matplotlib
+import seaborn as sns
 
 if __name__ == "__main__":
-    encoded_df = ds.get_lable_encoded_clear_df()
+    #encoded_df = ds.get_lable_encoded_clear_df()
 
-    upper_limit = encoded_df['Price'].quantile(0.995)
-    bottom_limit = encoded_df['Price'].quantile(0.005)
+    #upper_limit = encoded_df['Price'].quantile(0.995)
+    #bottom_limit = encoded_df['Price'].quantile(0.005)
 
-    print(upper_limit, bottom_limit)
+    #print(upper_limit, bottom_limit)
 
-    encoded_df = encoded_df[encoded_df['Price'].between(bottom_limit, upper_limit)]
+    #encoded_df = encoded_df[encoded_df['Price'].between(bottom_limit, upper_limit)]
 
-    upper_limit = encoded_df['Mileage'].quantile(0.995)
-    bottom_limit = encoded_df['Mileage'].quantile(0.005)
+    #upper_limit = encoded_df['Mileage'].quantile(0.995)
+    #bottom_limit = encoded_df['Mileage'].quantile(0.005)
 
-    print(upper_limit, bottom_limit)
+    #print(upper_limit, bottom_limit)
 
-    encoded_df = encoded_df[encoded_df['Mileage'].between(bottom_limit, upper_limit)]
+    #encoded_df = encoded_df[encoded_df['Mileage'].between(bottom_limit, upper_limit)]
 
-    print(encoded_df.head)
+    #print(encoded_df.head)
+    src_df = ds.get_clear_df()#ds.get_src_df(regenerate=True, proceed_str=True)
 
-    X = encoded_df[['Year', 'Mileage', 'Make_Model', 'State_cat', 'City_cat']]
-    y = encoded_df['Price']
+    src_df['Model'] = src_df['Model'].astype('category').cat.codes
+    src_df['Make'] = src_df['Make'].astype('category').cat.codes
+    src_df['City'] = src_df['City'].astype('category').cat.codes
+    src_df['State'] = src_df['State'].astype('category').cat.codes
+    #src_df['Year'] = src_df['Year'].astype('float')
+    src_df.drop('Vin', inplace=True, axis=1)
+
+    X = src_df[['Year', 'Mileage', 'Make', 'Model', 'State', 'City']]
+    y = src_df['Price']
 
 
+
+    print(src_df.dtypes)
+
+
+    sns.heatmap(src_df.corr(), annot=True)
+    plt.show()
 
     #X = X.apply(scipy.stats.zscore)
-    y = y.apply(np.log)
+    #y = y.apply(np.log)
     #X['Mileage'] = X['Mileage'].map(np.log)
     #print(X.head)
 
@@ -57,5 +69,8 @@ if __name__ == "__main__":
 
     print("Best r2: ", r2)
 
-    xgb.plot_importance(xgb_model)
-    plt.show()
+    xgb.plot_importance(xgb_model, title="Clear data after string processing.")
+
+
+
+
