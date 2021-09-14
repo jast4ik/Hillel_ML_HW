@@ -26,25 +26,25 @@ if __name__ == "__main__":
     #encoded_df = encoded_df[encoded_df['Mileage'].between(bottom_limit, upper_limit)]
 
     #print(encoded_df.head)
-    src_df = ds.get_clear_df()#ds.get_src_df(regenerate=True, proceed_str=True)
+    src_df = ds.get_src_df()#ds.get_src_df(regenerate=True, proceed_str=True)
 
-    src_df['Model'] = src_df['Model'].astype('category').cat.codes
-    src_df['Make'] = src_df['Make'].astype('category').cat.codes
-    src_df['City'] = src_df['City'].astype('category').cat.codes
-    src_df['State'] = src_df['State'].astype('category').cat.codes
+
     #src_df['Year'] = src_df['Year'].astype('float')
     src_df.drop('Vin', inplace=True, axis=1)
 
     X = src_df[['Year', 'Mileage', 'Make', 'Model', 'State', 'City']]
     y = src_df['Price']
 
+    print(src_df.duplicated().sum())
 
 
-    print(src_df.dtypes)
+    #sns.heatmap(src_df.corr(), annot=True)
+    #fig, (dist_1, dist_2, dist_3) = plt.subplots(1, 3)
+    sns.pairplot(src_df[['Price', 'Mileage', 'Year']])
 
 
-    sns.heatmap(src_df.corr(), annot=True)
     plt.show()
+    exit()
 
     #X = X.apply(scipy.stats.zscore)
     #y = y.apply(np.log)

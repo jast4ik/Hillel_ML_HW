@@ -4,7 +4,14 @@ import pandas as pd
 import gc
 import re
 import numpy as np
+import scipy.stats
 from scipy.stats import zscore
+import matplotlib.pyplot as plt
+import seaborn as sns
+import xgboost as xgb
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import r2_score
+import pickle
 
 
 def get_src_df(regenerate=False, proceed_str=True):
@@ -45,6 +52,8 @@ def get_src_df(regenerate=False, proceed_str=True):
                 lambda x: str.upper(x) if type(x) is str else np.NaN
             )
 
+        src_df.drop_duplicates(inplace=True)
+
         src_df.to_pickle(path="./data/src_df.pkl", compression='zip')
         print("\nSource dataframe created.")
 
@@ -61,9 +70,9 @@ def get_clear_df(regenerate=False):
         src_df = get_src_df()
 
         clear_df = src_df.loc[
-            (src_df['Price'] != 0) &
+            (src_df['Price'] > 0) &
             (~src_df['Mileage'].isna()) &
-            (src_df['Mileage'] != 0) &
+            (src_df['Mileage'] > 0) &
             (~src_df['Model'].isna())
         ]
 
@@ -83,31 +92,12 @@ def get_label_encoded_clear_df(regenerate=False):
         result_df = pd.read_pickle(filepath_or_buffer="./data/clear_label_encoded_df.pkl", compression='zip')
         print("\nLabel encoded dataframe loaded.")
     else:
-        clear_df = get_clear_df()
+        result_df = get_clear_df()
 
-        make_cat = pd.DataFrame()
-        model_cat = pd.DataFrame()
-        make_model_cat = pd.DataFrame()
-        state_cat = pd.DataFrame()
-        city_cat = pd.DataFrame()
-        #make_cat['Make_cat'] = clear_df['Make'].astype('category').cat.codes
-        #model_cat['Model_cat'] = clear_df['Model'].astype('category').cat.codes
-        state_cat['City_cat'] = clear_df['City'].astype('category').cat.codes
-        city_cat['State_cat'] = clear_df['State'].astype('category').cat.codes
-
-        result_df = clear_df.select_dtypes(include=['int64', 'float64'])
-        #result_df = result_df.join(model_cat)
-        #result_df = result_df.join(make_cat)
-        make_model_cat['Make_Model'] = clear_df['Make'] + clear_df['Model']
-        make_model_cat['Make_Model'] = make_model_cat['Make_Model'].astype('category').cat.codes
-        result_df = result_df.join(city_cat)
-        result_df = result_df.join(state_cat)
-        result_df = result_df.join(make_model_cat)
-
-        del clear_df
-        del make_cat
-        del model_cat
-        gc.collect()
+        result_df['Model'] = result_df['Model'].astype('category').cat.codes
+        result_df['Make'] = result_df['Make'].astype('category').cat.codes
+        result_df['City'] = result_df['City'].astype('category').cat.codes
+        result_df['State'] = result_df['State'].astype('category').cat.codes
 
         result_df.to_pickle(path="./data/clear_label_encoded_df.pkl", compression='zip')
         print("\nLabel encoded dataframe created.")
@@ -115,11 +105,120 @@ def get_label_encoded_clear_df(regenerate=False):
     return result_df
 
 
+def impute_mileage(regenerate=False):
+    result_df = get_src_df()
+
+    max_year = result_df.Year.max()
+
+    for index in result_df.index:
+        if result_df.loc[index, 'Year'] == max_year and \
+                (result_df.loc[index, 'Mileage'] < 5 or np.isnan(result_df.loc[index, 'Mileage'])):
+            result_df.loc[index, 'Mileage'] = 5
+
+    xgb_model = xgb.XGBRegressor()
+
+    if isfile("./data/models/mileage_imputation_model.pkl") and not regenerate:
+        with open("./data/models/mileage_imputation_model.pkl", "rb") as m_file:
+            xgb_model = pickle.load(m_file)
+    else:
+        clear_e_df = get_label_encoded_clear_df()
+        clear_e_df.drop('Vin', inplace=True, axis=1)
+
+        max_limit = clear_e_df['Mileage'].quantile(0.995)
+        min_limit = clear_e_df['Mileage'].quantile(0.005)
+
+        clear_e_df = clear_e_df[(clear_e_df['Mileage'] < max_limit) & (clear_e_df['Mileage'] > min_limit)]
+
+        X = clear_e_df[['Year', 'Make', 'State', 'City', 'Price', 'Model']]
+        y = clear_e_df['Mileage']
+
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1, random_state=42)
+
+        dmatrix_train = xgb.DMatrix(data=X_train, label=y_train)
+        dmatrix_test = xgb.DMatrix(data=X_test, label=y_test)
+
+        xgb_model = xgb.train(params={'objective': 'reg:squarederror'},
+                              dtrain=dmatrix_train,
+                              evals=[(dmatrix_train, "train"), (dmatrix_test, "validation")],
+                              num_boost_round=10000,
+                              verbose_eval=20,
+                              early_stopping_rounds=25
+                              )
+
+        del clear_e_df
+        del X
+        del y
+        del X_test
+        del y_test
+        del X_train
+        del y_train
+        del dmatrix_test
+        del dmatrix_train
+        gc.collect()
+
+        with open("./data/models/mileage_imputation_model.pkl", "wb") as m_file:
+            pickle.dump(xgb_model, m_file)
+
+    to_predict_df = result_df.loc[
+        (result_df['Mileage'].isna()) &
+        (result_df['Price'] != 0) &
+        (~result_df['Model'].isna())
+        ]
+
+    to_predict_df = to_predict_df[['Year', 'Make', 'State', 'City', 'Price', 'Model']]
+
+    to_predict_df['Model'] = to_predict_df['Model'].astype('category').cat.codes
+    to_predict_df['Make'] = to_predict_df['Make'].astype('category').cat.codes
+    to_predict_df['City'] = to_predict_df['City'].astype('category').cat.codes
+    to_predict_df['State'] = to_predict_df['State'].astype('category').cat.codes
+
+    dmatrix_predict = xgb.DMatrix(to_predict_df)
+    xgb_preds = xgb_model.predict(dmatrix_predict)
+    #print(xgb_preds.head)
+    #print(to_predict_df.head)
+
+    return result_df
+
+
 if __name__ == "__main__":
-    pass
-    src_df = get_src_df(regenerate=True, proceed_str=True)
-    #print(len(src_df['Make'].unique()))
-    #print(src_df.isna().sum())
+    src_df = get_src_df()
+    print(src_df.isna().sum())
+    mi_df = impute_mileage()
+    print(mi_df.isna().sum())
+    exit()
+
+    src_df = get_src_df(regenerate=False)
+    clear_df = get_clear_df(regenerate=False)
+    #enc_df = get_label_encoded_clear_df(regenerate=True)
+
+    max_limit = src_df['Mileage'].quantile(0.995)
+    min_limit = src_df['Mileage'].quantile(0.005)
+
+    print(src_df.shape)
+
+    src_df = src_df[(src_df['Mileage'] < max_limit) & (src_df['Mileage'] > min_limit)]
+
+    print(src_df.shape)
+
+    sns.pairplot(src_df)
+    plt.show()
+
+    src_df['Price_Z'] = src_df[['Price']].apply(scipy.stats.zscore)
+    src_df['Mileage_Z'] = src_df[['Price']].apply(scipy.stats.zscore)
+    z_limit = 3.5
+    src_df = src_df.loc[
+        (src_df['Price_Z'] < z_limit) &
+        (src_df['Price_Z'] > -1 * z_limit) &
+        (src_df['Mileage_Z'] < z_limit) &
+        (src_df['Mileage_Z'] > -1 * z_limit)
+    ]
+
+    #src_df.drop(['Price_Z'], axis=1, inplace=True)
+    #src_df.drop(['Mileage_Z'], axis=1, inplace=True)
     print(src_df.head)
-    clear_df = get_clear_df(regenerate=True)
-    print(clear_df.shape, src_df.shape)
+
+    #sns.pairplot(src_df)
+    #sns.displot(src_df['Mileage'])
+    #plt.show()
+
+    print(src_df['Mileage'].max())
