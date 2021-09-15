@@ -14,7 +14,7 @@ from sklearn.metrics import r2_score
 import pickle
 
 
-def get_src_df(regenerate=False, proceed_str=True):
+def get_src_df(regenerate=False, strip_str=True, encode_labels=False):
     src_df = pd.DataFrame()
 
     if isfile("./data/src_df.pkl") and not regenerate:
@@ -22,8 +22,11 @@ def get_src_df(regenerate=False, proceed_str=True):
         print("\nSource dataframe loaded.")
     else:
         src_df = pd.read_csv('./data/true_car_listings_prepeared.csv')
+        src_df.drop('Vin', inplace=True, axis=1)
 
-        if proceed_str:
+        src_df.drop_duplicates(inplace=True)
+
+        if strip_str:
             src_df['Model'] = src_df['Model'].map(
                 lambda x: "".join(re.findall("[a-zA-Z0-9]+", x)) if type(x) is str else np.NaN
             )
@@ -52,7 +55,17 @@ def get_src_df(regenerate=False, proceed_str=True):
                 lambda x: str.upper(x) if type(x) is str else np.NaN
             )
 
-        src_df.drop_duplicates(inplace=True)
+        if encode_labels:
+            temp_df = src_df[['Model', 'Make', 'City', 'State']].astype('category').apply(lambda x: x.cat.codes)
+            temp_df = temp_df.where(~src_df.isna(), src_df)
+
+            src_df['Model'] = temp_df['Model']
+            src_df['Make'] = temp_df['Make']
+            src_df['City'] = temp_df['City']
+            src_df['State'] = temp_df['State']
+
+            del temp_df
+            gc.collect()
 
         src_df.to_pickle(path="./data/src_df.pkl", compression='zip')
         print("\nSource dataframe created.")
@@ -121,8 +134,7 @@ def impute_mileage(regenerate=False):
         with open("./data/models/mileage_imputation_model.pkl", "rb") as m_file:
             xgb_model = pickle.load(m_file)
     else:
-        clear_e_df = get_label_encoded_clear_df()
-        clear_e_df.drop('Vin', inplace=True, axis=1)
+        clear_e_df = get_src_df().dropna(axis=0)
 
         max_limit = clear_e_df['Mileage'].quantile(0.995)
         min_limit = clear_e_df['Mileage'].quantile(0.005)
@@ -131,6 +143,8 @@ def impute_mileage(regenerate=False):
 
         X = clear_e_df[['Year', 'Make', 'State', 'City', 'Price', 'Model']]
         y = clear_e_df['Mileage']
+
+        print(X.dtypes)
 
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1, random_state=42)
 
@@ -167,23 +181,19 @@ def impute_mileage(regenerate=False):
 
     to_predict_df = to_predict_df[['Year', 'Make', 'State', 'City', 'Price', 'Model']]
 
-    to_predict_df['Model'] = to_predict_df['Model'].astype('category').cat.codes
-    to_predict_df['Make'] = to_predict_df['Make'].astype('category').cat.codes
-    to_predict_df['City'] = to_predict_df['City'].astype('category').cat.codes
-    to_predict_df['State'] = to_predict_df['State'].astype('category').cat.codes
-
     dmatrix_predict = xgb.DMatrix(to_predict_df)
     xgb_preds = xgb_model.predict(dmatrix_predict)
-    #print(xgb_preds.head)
-    #print(to_predict_df.head)
+    print(xgb_preds)
+    print(to_predict_df.head)
 
     return result_df
 
 
 if __name__ == "__main__":
-    src_df = get_src_df()
+    src_df = get_src_df(regenerate=True, strip_str=True, encode_labels=True)
     print(src_df.isna().sum())
-    mi_df = impute_mileage()
+    print(src_df.head)
+    mi_df = impute_mileage(regenerate=True)
     print(mi_df.isna().sum())
     exit()
 
