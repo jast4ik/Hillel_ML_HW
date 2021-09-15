@@ -1,3 +1,4 @@
+import random
 import struct
 from os.path import isfile
 import pandas as pd
@@ -12,6 +13,13 @@ import xgboost as xgb
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import r2_score
 import pickle
+
+
+df_column_order = ['Price', 'Year', 'Mileage', 'City', 'State', 'Make', 'Model']
+
+
+def get_column_order(current_order: list):
+    return [x for x in df_column_order if x in current_order]
 
 
 def get_src_df(regenerate=False, strip_str=True, encode_labels=False):
@@ -59,7 +67,7 @@ def get_src_df(regenerate=False, strip_str=True, encode_labels=False):
             temp_df = src_df[['Model', 'Make', 'City', 'State']].astype('category').apply(lambda x: x.cat.codes)
             temp_df = temp_df.where(~src_df.isna(), src_df)
 
-            src_df['Model'] = temp_df['Model']
+            src_df['Model'] = temp_df['Model'].astype('float')
             src_df['Make'] = temp_df['Make']
             src_df['City'] = temp_df['City']
             src_df['State'] = temp_df['State']
@@ -71,51 +79,6 @@ def get_src_df(regenerate=False, strip_str=True, encode_labels=False):
         print("\nSource dataframe created.")
 
     return src_df
-
-
-def get_clear_df(regenerate=False):
-    clear_df = pd.DataFrame()
-
-    if isfile("./data/clear_df.pkl") and not regenerate:
-        clear_df = pd.read_pickle(filepath_or_buffer="./data/clear_df.pkl", compression='zip')
-        print("\nClear dataframe loaded.")
-    else:
-        src_df = get_src_df()
-
-        clear_df = src_df.loc[
-            (src_df['Price'] > 0) &
-            (~src_df['Mileage'].isna()) &
-            (src_df['Mileage'] > 0) &
-            (~src_df['Model'].isna())
-        ]
-
-        clear_df.to_pickle(path="./data/clear_df.pkl", compression='zip')
-        print("\nClear dataframe created.")
-
-        del src_df
-        gc.collect()
-
-    return clear_df
-
-
-def get_label_encoded_clear_df(regenerate=False):
-    result_df = pd.DataFrame()
-
-    if isfile("./data/clear_label_encoded_df.pkl") and not regenerate:
-        result_df = pd.read_pickle(filepath_or_buffer="./data/clear_label_encoded_df.pkl", compression='zip')
-        print("\nLabel encoded dataframe loaded.")
-    else:
-        result_df = get_clear_df()
-
-        result_df['Model'] = result_df['Model'].astype('category').cat.codes
-        result_df['Make'] = result_df['Make'].astype('category').cat.codes
-        result_df['City'] = result_df['City'].astype('category').cat.codes
-        result_df['State'] = result_df['State'].astype('category').cat.codes
-
-        result_df.to_pickle(path="./data/clear_label_encoded_df.pkl", compression='zip')
-        print("\nLabel encoded dataframe created.")
-
-    return result_df
 
 
 def impute_mileage(regenerate=False):
@@ -141,10 +104,8 @@ def impute_mileage(regenerate=False):
 
         clear_e_df = clear_e_df[(clear_e_df['Mileage'] < max_limit) & (clear_e_df['Mileage'] > min_limit)]
 
-        X = clear_e_df[['Year', 'Make', 'State', 'City', 'Price', 'Model']]
-        y = clear_e_df['Mileage']
-
-        print(X.dtypes)
+        X = clear_e_df[get_column_order(['Year', 'Make', 'State', 'City', 'Price', 'Model'])]
+        y = clear_e_df['Mileage'].apply(np.log)
 
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1, random_state=42)
 
@@ -158,6 +119,9 @@ def impute_mileage(regenerate=False):
                               verbose_eval=20,
                               early_stopping_rounds=25
                               )
+        xgb_preds = xgb_model.predict(dmatrix_test)
+        r2 = r2_score(y_test, xgb_preds)
+        print("Model for mileage imputation trained with R2 = {:.4f}.".format(r2))
 
         del clear_e_df
         del X
@@ -179,26 +143,33 @@ def impute_mileage(regenerate=False):
         (~result_df['Model'].isna())
         ]
 
-    to_predict_df = to_predict_df[['Year', 'Make', 'State', 'City', 'Price', 'Model']]
+    to_predict_df = to_predict_df[get_column_order(['Year', 'Make', 'State', 'City', 'Price', 'Model'])]
 
     dmatrix_predict = xgb.DMatrix(to_predict_df)
     xgb_preds = xgb_model.predict(dmatrix_predict)
-    print(xgb_preds)
-    print(to_predict_df.head)
+
+    print(result_df.head)
+    print(
+        to_predict_df.index
+    )
+
+    pred_index = 0
+    for df_index in to_predict_df.index:
+        result_df.loc[df_index, 'Mileage'] = int(np.e ** xgb_preds[pred_index])
+        pred_index += 1
 
     return result_df
 
 
 if __name__ == "__main__":
-    src_df = get_src_df(regenerate=True, strip_str=True, encode_labels=True)
-    print(src_df.isna().sum())
-    print(src_df.head)
-    mi_df = impute_mileage(regenerate=True)
+    #src_df = get_src_df(regenerate=True, strip_str=True, encode_labels=True)
+    #print(src_df.isna().sum())
+    #print(src_df.head)
+    mi_df = impute_mileage()
     print(mi_df.isna().sum())
+    #print(mi_df.isna().sum())
     exit()
 
-    src_df = get_src_df(regenerate=False)
-    clear_df = get_clear_df(regenerate=False)
     #enc_df = get_label_encoded_clear_df(regenerate=True)
 
     max_limit = src_df['Mileage'].quantile(0.995)
