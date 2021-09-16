@@ -15,11 +15,36 @@ from sklearn.metrics import r2_score
 import pickle
 
 
-df_column_order = ['Price', 'Year', 'Mileage', 'City', 'State', 'Make', 'Model']
+def_column_order = ['Price', 'Year', 'Mileage', 'City', 'State', 'Make', 'Model']
 
 
 def get_column_order(current_order: list):
-    return [x for x in df_column_order if x in current_order]
+    return [x for x in def_column_order if x in current_order]
+
+
+def proceed_cat_str(in_cat: pd.Series):
+    res_cat = in_cat.map(
+        lambda x: "".join(re.findall("[a-zA-Z0-9]+", x)) if type(x) is str else np.NaN
+    )
+
+    res_cat = res_cat.map(
+        lambda x: str.upper(x) if type(x) is str else np.NaN
+    )
+
+    return res_cat
+
+
+def concat_cat(src_df: pd.DataFrame, name: str):
+    res_cat = pd.Series(dtype=str)
+    res_cat.name = name
+
+    for col in src_df:
+        if res_cat.shape[0] == 0:
+            res_cat = src_df[col].astype(str)
+        else:
+            res_cat = res_cat + src_df[col].astype(str)
+
+    return res_cat
 
 
 def get_src_df(regenerate=False, strip_str=True, encode_labels=False):
@@ -35,33 +60,13 @@ def get_src_df(regenerate=False, strip_str=True, encode_labels=False):
         src_df.drop_duplicates(inplace=True)
 
         if strip_str:
-            src_df['Model'] = src_df['Model'].map(
-                lambda x: "".join(re.findall("[a-zA-Z0-9]+", x)) if type(x) is str else np.NaN
-            )
-            src_df['Model'] = src_df['Model'].map(
-                lambda x: str.upper(x) if type(x) is str else np.NaN
-            )
+            src_df['Model'] = proceed_cat_str(src_df['Model'])
 
-            src_df['Make'] = src_df['Make'].map(
-                lambda x: "".join(re.findall("[a-zA-Z]+", x)) if type(x) is str else np.NaN
-            )
-            src_df['Make'] = src_df['Make'].map(
-                lambda x: str.upper(x) if type(x) is str else np.NaN
-            )
+            src_df['Make'] = proceed_cat_str(src_df['Make'])
 
-            src_df['City'] = src_df['City'].map(
-                lambda x: "".join(re.findall("[a-zA-Z]+", x)) if type(x) is str else np.NaN
-            )
-            src_df['City'] = src_df['City'].map(
-                lambda x: str.upper(x) if type(x) is str else np.NaN
-            )
+            src_df['City'] = proceed_cat_str(src_df['City'])
 
-            src_df['State'] = src_df['State'].map(
-                lambda x: "".join(re.findall("[a-zA-Z]+", x)) if type(x) is str else np.NaN
-            )
-            src_df['State'] = src_df['State'].map(
-                lambda x: str.upper(x) if type(x) is str else np.NaN
-            )
+            src_df['State'] = proceed_cat_str(src_df['State'])
 
         if encode_labels:
             temp_df = src_df[['Model', 'Make', 'City', 'State']].astype('category').apply(lambda x: x.cat.codes)
@@ -106,6 +111,9 @@ def impute_mileage(regenerate=False):
 
         X = clear_e_df[get_column_order(['Year', 'Make', 'State', 'City', 'Price', 'Model'])]
         y = clear_e_df['Mileage'].apply(np.log)
+        X['Year_Make_Model'] = concat_cat(clear_e_df[['Year', 'Make', 'Model']], name="")
+        #X.drop(['Year', 'Make', 'Model'], inplace=True, axis=1)
+        X['Year_Make_Model'] = X['Year_Make_Model'].astype('category').cat.codes
 
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1, random_state=42)
 
@@ -144,6 +152,9 @@ def impute_mileage(regenerate=False):
         ]
 
     to_predict_df = to_predict_df[get_column_order(['Year', 'Make', 'State', 'City', 'Price', 'Model'])]
+    to_predict_df['Year_Make_Model'] = concat_cat(to_predict_df[['Year', 'Make', 'Model']], name="")
+    #to_predict_df.drop(['Year', 'Make', 'Model'], inplace=True, axis=1)
+    to_predict_df['Year_Make_Model'] = to_predict_df['Year_Make_Model'].astype('category').cat.codes
 
     dmatrix_predict = xgb.DMatrix(to_predict_df)
     xgb_preds = xgb_model.predict(dmatrix_predict)
@@ -162,10 +173,13 @@ def impute_mileage(regenerate=False):
 
 
 if __name__ == "__main__":
-    #src_df = get_src_df(regenerate=True, strip_str=True, encode_labels=True)
+    src_df = get_src_df(regenerate=True, strip_str=True, encode_labels=True)
+    #test = concat_cat(src_df[['Year', 'Make', 'Model']], name='Year_Make_Model')
+    #print(test.head)
+
     #print(src_df.isna().sum())
     #print(src_df.head)
-    mi_df = impute_mileage()
+    mi_df = impute_mileage(regenerate=False)
     print(mi_df.isna().sum())
     #print(mi_df.isna().sum())
     exit()
