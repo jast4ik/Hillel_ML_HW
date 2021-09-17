@@ -1,5 +1,3 @@
-import random
-import struct
 from os.path import isfile
 import pandas as pd
 import gc
@@ -16,13 +14,14 @@ import pickle
 
 
 def_column_order = ['Price', 'Year', 'Mileage', 'City', 'State', 'Make', 'Model']
+numeric_types = ['int16', 'int32', 'int64', 'float16', 'float32', 'float64']
 
 
 def get_column_order(current_order: list):
     return [x for x in def_column_order if x in current_order]
 
 
-def proceed_cat_str(in_cat: pd.Series):
+def proceed_cat_str(in_cat: pd.Series, trim=-1):
     res_cat = in_cat.map(
         lambda x: "".join(re.findall("[a-zA-Z0-9]+", x)) if type(x) is str else np.NaN
     )
@@ -30,6 +29,9 @@ def proceed_cat_str(in_cat: pd.Series):
     res_cat = res_cat.map(
         lambda x: str.upper(x) if type(x) is str else np.NaN
     )
+
+    if trim != -1:
+        res_cat = res_cat.str[:trim]
 
     return res_cat
 
@@ -173,14 +175,48 @@ def impute_mileage(regenerate=False):
 
 
 if __name__ == "__main__":
-    src_df = get_src_df(regenerate=True, strip_str=True, encode_labels=True)
+    src_df = get_src_df()
+
+    src_df['Model'] = proceed_cat_str(src_df['Model'])
+
+    before2004 = src_df.where(src_df['Year'] <= 2004)['Model'].value_counts().keys()
+    after2004 = src_df.where(src_df['Year'] > 2004)['Model'].value_counts().keys()
+
+    inter = np.setdiff1d(before2004, after2004)
+
+    #print(src_df.shape[0])
+
+    m = src_df.query('Model in @inter')
+
+    #print(m.head)
+
+    src_df = src_df.loc[
+        (~src_df['Model'].isin(m['Model'])) &
+        (src_df['Year'] > 2004) &
+        (src_df['Mileage'] < 200000)
+    ]
+
+
+    src_df['Make'] = proceed_cat_str(src_df['Make'])
+    src_df['City'] = proceed_cat_str(src_df['City'])
+    src_df['State'] = proceed_cat_str(src_df['State'])
+    print(src_df.head)
+
+    #print(m['Year'].max())
+
+    #sns.pairplot(src_df)
+    # sns.displot(src_df['Mileage'])
+    #plt.show()
+
+    #print(maxq.describe())
+
     #test = concat_cat(src_df[['Year', 'Make', 'Model']], name='Year_Make_Model')
     #print(test.head)
 
     #print(src_df.isna().sum())
     #print(src_df.head)
-    mi_df = impute_mileage(regenerate=False)
-    print(mi_df.isna().sum())
+    #mi_df = impute_mileage(regenerate=False)
+    #print(mi_df.isna().sum())
     #print(mi_df.isna().sum())
     exit()
 
