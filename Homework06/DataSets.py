@@ -184,11 +184,7 @@ if __name__ == "__main__":
 
     inter = np.setdiff1d(before2004, after2004)
 
-    #print(src_df.shape[0])
-
     m = src_df.query('Model in @inter')
-
-    #print(m.head)
 
     src_df = src_df.loc[
         (~src_df['Model'].isin(m['Model'])) &
@@ -196,17 +192,45 @@ if __name__ == "__main__":
         (src_df['Mileage'] < 200000)
     ]
 
-
     src_df['Make'] = proceed_cat_str(src_df['Make'])
     src_df['City'] = proceed_cat_str(src_df['City'])
     src_df['State'] = proceed_cat_str(src_df['State'])
-    print(src_df.head)
+
+    temp_df = src_df[['Model', 'Make', 'City', 'State']].astype('category').apply(lambda x: x.cat.codes)
+    temp_df = temp_df.where(~src_df.isna(), src_df)
+
+    src_df['Model'] = temp_df['Model'].astype('float')
+    src_df['Make'] = temp_df['Make']
+    src_df['City'] = temp_df['City']
+    src_df['State'] = temp_df['State']
+
+    temp_df = src_df.loc[
+        (src_df['Price'] != 0) &
+        (~src_df['Model'].isna())
+        ]
+
+    X = src_df[get_column_order(['Year', 'Make', 'State', 'City', 'Price', 'Mileage'])]
+    y = src_df['Model']
+
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1, random_state=42)
+    model = xgb.XGBClassifier()
+
+    dmatrix_train = xgb.DMatrix(data=X_train, label=y_train)
+    dmatrix_test = xgb.DMatrix(data=X_test, label=y_test)
+
+    class_num = y.max()
+    print(class_num)
+
+    #xgb_model = xgb.XGBClassifier(objective='multi:softmax')
+
+    #xgb_model.fit(X, y)
 
     #print(m['Year'].max())
 
-    #sns.pairplot(src_df)
-    # sns.displot(src_df['Mileage'])
-    #plt.show()
+    sns.pairplot(data=src_df, corner=True)
+    #sns.displot(src_df)
+    #sns.heatmap(src_df.corr(), annot=True)
+    plt.show()
 
     #print(maxq.describe())
 
