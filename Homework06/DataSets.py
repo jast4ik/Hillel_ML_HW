@@ -11,6 +11,8 @@ import xgboost as xgb
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import r2_score
 import pickle
+from sklearn.impute import KNNImputer
+from sklearn.impute import SimpleImputer
 
 
 def_column_order = ['Price', 'Year', 'Mileage', 'City', 'State', 'Make', 'Model']
@@ -122,6 +124,8 @@ def impute_mileage(regenerate=False):
         dmatrix_train = xgb.DMatrix(data=X_train, label=y_train)
         dmatrix_test = xgb.DMatrix(data=X_test, label=y_test)
 
+        xgb_model = xgb.XGBRegressor()
+
         xgb_model = xgb.train(params={'objective': 'reg:squarederror'},
                               dtrain=dmatrix_train,
                               evals=[(dmatrix_train, "train"), (dmatrix_test, "validation")],
@@ -218,18 +222,43 @@ if __name__ == "__main__":
     dmatrix_train = xgb.DMatrix(data=X_train, label=y_train)
     dmatrix_test = xgb.DMatrix(data=X_test, label=y_test)
 
-    class_num = y.max()
-    print(class_num)
+    #class_num = y.max()
+    #print(src_df.head)
+    idx = src_df.loc[src_df['Model'].isna()].index
 
-    #xgb_model = xgb.XGBClassifier(objective='multi:softmax')
+    print(src_df.loc[src_df.index.isin(idx)])
+
+    src_df_imputed = pd.DataFrame()
+    src_df_imputed = pd.read_pickle(filepath_or_buffer="./data/src_df_model_imputed.pkl", compression='zip')
+
+    print(src_df_imputed.loc[src_df_imputed.index.isin(idx)])
+
+    #print(idx)
+
+    imputer = KNNImputer(n_neighbors=3)
+    src_df_imputed = pd.DataFrame(imputer.fit_transform(src_df), columns=src_df.columns)
+
+    src_df_imputed.to_pickle(path="./data/src_df_model_imputed.pkl", compression='zip')
+
+    print(src_df_imputed.loc[src_df_imputed.index.isin(idx)])
+
+
+    #src_df_imputed = imputer.fit_transform(src_df)
+
+
+
+    #src_df_imputed.to_pickle(path="./data/src_df_model_imputed.pkl", compression='zip')
+
+    xgb_model = xgb.XGBClassifier(objective='multi:softmax')
+    xgb.plot_importance(xgb_model)
 
     #xgb_model.fit(X, y)
 
     #print(m['Year'].max())
 
-    sns.pairplot(data=src_df, corner=True)
+    #sns.pairplot(data=src_df, corner=True)
     #sns.displot(src_df)
-    #sns.heatmap(src_df.corr(), annot=True)
+    sns.heatmap(src_df.corr(), annot=True)
     plt.show()
 
     #print(maxq.describe())
@@ -268,6 +297,8 @@ if __name__ == "__main__":
         (src_df['Mileage_Z'] > -1 * z_limit)
     ]
 
+    xgb_
+
     #src_df.drop(['Price_Z'], axis=1, inplace=True)
     #src_df.drop(['Mileage_Z'], axis=1, inplace=True)
     print(src_df.head)
@@ -277,3 +308,23 @@ if __name__ == "__main__":
     #plt.show()
 
     print(src_df['Mileage'].max())
+
+    if isfile("./data/models/iter_01_model.pkl"):
+        with open("./data/models/mileage_imputation_model.pkl", "rb") as m_file:
+            xgb_model = pickle.load(m_file)
+    else:
+        X = work_ds[get_column_order(['Year', 'Make', 'State', 'City', 'Mileage', 'Model'])]
+        y = work_ds['Price']
+
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1, random_state=42)
+
+        dmatrix_train = xgb.DMatrix(data=X_train, label=y_train)
+        dmatrix_test = xgb.DMatrix(data=X_test, label=y_test)
+
+        xgb_model = xgb.train(params={'objective': 'reg:squarederror'},
+                              dtrain=dmatrix_train,
+                              evals=[(dmatrix_train, "train"), (dmatrix_test, "validation")],
+                              num_boost_round=10000,
+                              verbose_eval=20,
+                              early_stopping_rounds=25
+                              )
