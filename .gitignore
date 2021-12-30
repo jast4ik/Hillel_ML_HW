@@ -128,3 +128,21 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+Homework14/dask-worker-space/global.lock
+Homework14/dask-worker-space/purge.lock
+Homework14/dask-worker-space/worker-55vcxxa8.dirlock
+Homework14/dask-worker-space/worker-d4l7w91r.dirlock
+Homework14/dask-worker-space/worker-qde6rioe.dirlock
+Homework14/dask-worker-space/worker-v9tmiln8.dirlock
+Homework15/dask-worker-space/global.lock
+Homework15/dask-worker-space/purge.lock
+Homework15/dask-worker-space/worker-5bv6wxc1.dirlock
+Homework15/dask-worker-space/worker-pxmpejwf.dirlock
+Homework15/dask-worker-space/worker-rq04_kyb.dirlock
+Homework15/dask-worker-space/worker-t9_f091o.dirlock
+Homework16/dask-worker-space/global.lock
+Homework16/dask-worker-space/purge.lock
+Homework16/dask-worker-space/worker-g6cow7a_.dirlock
+Homework16/dask-worker-space/worker-oyrd3owy.dirlock
+Homework16/dask-worker-space/worker-v_4dzz9a.dirlock
+Homework16/dask-worker-space/worker-yfaw8cxj.dirlock
