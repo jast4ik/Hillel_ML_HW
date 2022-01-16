@@ -3,7 +3,6 @@ Homework14/tf_data/
 __pycache__/
 *.py[cod]
 *$py.class
-hillel_hw_venv/
 
 # C extensions
 *.so
