@@ -4,6 +4,7 @@ __pycache__/
 *.py[cod]
 *$py.class
 hillel_hw_venv/
+logs/
 
 # C extensions
 *.so
